@@ -1,9 +1,6 @@
 /* ==========================================================================
    1. GRUNDEINSTELLUNGEN & FARBEN
    ========================================================================== */
-html {
-    scroll-behavior: smooth;
-}
 * {
     margin: 0;
     padding: 0;
@@ -227,4 +224,260 @@ footer {
     font-size: 0.9rem;
     margin-top: 60px;
     border-top: 1px solid #e8c5c8;
+}
+/* ==========================================================================
+   7. AUTOMATISCHE DIASHOW
+   ========================================================================== */
+.slideshow-section {
+    max-width: 800px; /* Begrenzt die Breite der Diashow, damit sie edel aussieht */
+    margin: 40px auto 20px auto;
+    padding: 0 20px;
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Feste Höhe für ein einheitliches Bild */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f4ece1;
+}
+
+/* Versteckt die Slides standardmäßig */
+.mySlides {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Schneidet die Bilder sauber zu, ohne sie zu verzerren */
+}
+
+/* Text auf den Bildern */
+.slide-text {
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(74, 63, 53, 0.8); /* Weicher Braunton mit Transparenz */
+    border-radius: 20px;
+    font-family: sans-serif;
+}
+
+/* Sanfter Überblend-Effekt (Animation) */
+.fade {
+    animation-name: fadeEffect;
+    animation-duration: 1.5s;
+}
+
+@keyframes fadeEffect {
+    from { opacity: .4; } 
+    to { opacity: 1; }
+}
+
+/* Anpassung für kleine Handys */
+@media (max-width: 600px) {
+    .slideshow-container {
+        height: 250px; /* Auf Handys etwas flacher */
+    }
+    .slide-text {
+        font-size: 0.9rem;
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 16px;
+    }
+}
+/* ==========================================================================
+   8. GALERIE FILTERS & LAYOUT
+   ========================================================================== */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0 50px 0;
+}
+
+.filter-btn {
+    background-color: white;
+    color: #7a6f62;
+    border: 2px solid #f4ece1;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.02);
+}
+
+.filter-btn:hover {
+    background-color: #f4ece1;
+    color: #4a3f35;
+}
+
+/* Wenn der Button ausgewählt ist */
+.filter-btn.active {
+    background-color: #b56c70; /* Das edle Altrosa */
+    color: white;
+    border-color: #b56c70;
+    box-shadow: 0 4px 12px rgba(181, 108, 112, 0.2);
+}
+
+.gallery-section-block {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: #b56c70;
+    margin-bottom: 25px;
+    border-bottom: 2px dashed #f4ece1;
+    padding-bottom: 10px;
+}
+
+/* Kennzeichnung für den aktiven Navigationspunkt */
+.nav-btn.active-nav {
+    border-bottom: 2px solid #b56c70;
+    border-radius: 0;
+}
+/* ==========================================================================
+   9. PRO-GALERIE DESIGN (DYNAMISCH & ÜBERSICHTLICH)
+   ========================================================================== */
+.gallery-controls {
+    text-align: center;
+    margin: 40px 0 30px 0;
+}
+
+.gallery-intro {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #7a6f62;
+    margin-bottom: 20px;
+}
+
+/* Edle Tab-Bar statt klobiger Knöpfe */
+.filter-tab-bar {
+    display: inline-flex;
+    background-color: #f4ece1; /* Passt zum Header */
+    padding: 6px;
+    border-radius: 30px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #7a6f62;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+    color: #4a3f35;
+}
+
+/* Der aktive Tab bekommt den edlen Look */
+.tab-btn.active {
+    background-color: #b56c70; /* Altrosa der Startseite */
+    color: white;
+    box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
+}
+
+/* Neues, kompaktes Grid */
+.pro-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+    padding-bottom: 40px;
+}
+
+/* Die einzelnen Bildkarten */
+.gallery-card {
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    border: 1px solid rgba(244, 236, 225, 0.5);
+}
+
+/* Hover-Effekt: Karte hebt sich leicht ab */
+.gallery-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(181, 108, 112, 0.12);
+}
+
+/* Bild-Container für Zoom-Effekt */
+.card-image-wrapper {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery-card:hover .card-image-wrapper img {
+    transform: scale(1.06); /* Bild zoomt ganz leicht rein beim Drüberfahren */
+}
+
+/* Textbereich unter den Bildern */
+.card-meta {
+    padding: 18px;
+    position: relative;
+}
+
+/* Kleines, dezentes Label für die Kategorie */
+.category-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b56c70;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.card-meta h3 {
+    font-size: 1.15rem;
+    color: #4a3f35;
+    margin-bottom: 6px;
+}
+
+.card-meta p {
+    font-size: 0.88rem;
+    color: #8c7e70;
+    line-height: 1.4;
+}
+
+/* Perfekte Anpassung für mobile Handys */
+@media (max-width: 500px) {
+    .filter-tab-bar {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        border-radius: 15px;
+    }
+    .tab-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    .pro-gallery-grid {
+        grid-template-columns: 1fr; /* Auf winzigen Bildschirmen alles untereinander */
+        gap: 20px;
+    }
 }

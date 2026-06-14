@@ -424,11 +424,12 @@ footer {
     overflow: hidden;
 }
 
+/* Das sorgt dafür, dass die Bilder niemals breiter als ihre Karte werden */
 .card-image-wrapper img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
+    height: 250px;       /* Oder die Höhe, die dir für die Karten am besten gefällt */
+    object-fit: cover;   /* Das schneidet das Bild sauber zu, ohne es zu verzerren */
+    display: block;
 }
 
 .gallery-card:hover .card-image-wrapper img {

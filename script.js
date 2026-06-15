@@ -1,7 +1,6 @@
 // ==========================================================================
 // FIREBASE INITIALISIERUNG (Bereinigt: Config wird global vorausgesetzt)
 // ==========================================================================
-// Falls firebaseConfig schon existiert, initialisieren wir es hier, falls nicht geschehen.
 if (typeof firebaseConfig !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -76,9 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================================================
-    // 3. LIVE-BILDER AUS FIREBASE IN DAS GRID LADEN
+    // 3. LIVE-BILDER AUS FIREBASE IN DAS GRID LADEN (ID KORRIGIERT)
     // ==========================================================================
-    const firebaseContainer = document.getElementById("firebase-bilder-container");
+    // KORREKTUR: Sucht jetzt nach der passenden ID aus deiner galerie.html
+    const firebaseContainer = document.getElementById("bilder-container");
 
     if (firebaseContainer) {
         firebase.firestore().collection("bilder").orderBy("hochgeladenAm", "desc")
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================================================
-// 5. FILTER-FUNKTION (Global für die HTML-Buttons registriert)
+// 5. FILTER-FUNKTION (KORRIGIERT: flexibles Einblenden für CSS-Grids)
 // ==========================================================================
 window.neuerFilter = function(kategorie) {
     const buttons = document.querySelectorAll(".tab-btn");
@@ -191,10 +191,10 @@ function wendeFilterAn(kategorie) {
     
     alleKarten.forEach(karte => {
         if (kategorie === "alle") {
-            karte.style.display = "block";
+            karte.style.display = ""; // Setzt es auf das Standard-CSS zurück (wichtig für Grids!)
         } else {
             if (karte.classList.contains(kategorie)) {
-                karte.style.display = "block";
+                karte.style.display = ""; 
             } else {
                 karte.style.display = "none";
             }

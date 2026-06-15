@@ -9,8 +9,8 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fcf9f5;
-    color: #4a3f35;
+    background-color: #fcf9f5; /* Ein warmes, gemütliches Wollweiß */
+    color: #4a3f35; /* Weicher Braun-Grau-Ton */
     line-height: 1.6;
 }
 
@@ -18,23 +18,22 @@ body {
     max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
-    width: 100%;
 }
 
 .trenner {
     border: 0;
     height: 1px;
     background: linear-gradient(to right, transparent, #e8c5c8, transparent);
-    margin: 40px 0;
+    margin: 60px 0;
 }
 
 /* ==========================================================================
-   2. HEADER (KOPFBEREICH)
+   2. HEADER (KOPFBEREICH) mit Bildanpassung
    ========================================================================== */
 header {
-    background-color: #f4ece1;
+    background-color: #f4ece1; /* Sanfter Sandton */
     padding: 40px 20px;
-    border-bottom: 3px dashed #e8c5c8;
+    border-bottom: 3px dashed #e8c5c8; /* Genähte Kante */
 }
 
 .header-container {
@@ -44,7 +43,6 @@ header {
     align-items: center;
     justify-content: space-between;
     gap: 30px;
-    width: 100%;
 }
 
 .header-text {
@@ -54,7 +52,7 @@ header {
 
 header h1 {
     font-size: 3rem;
-    color: #b56c70;
+    color: #b56c70; /* Edles Altrosa */
     margin-bottom: 10px;
     font-weight: 300;
     letter-spacing: 1px;
@@ -75,9 +73,23 @@ header p {
 .header-img {
     max-width: 100%;
     height: auto;
-    max-height: 220px;
+    max-height: 220px; /* Begrenzt die Höhe, damit das Bild kompakt bleibt */
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Header-Anpassung für kleinere Bildschirme / Handys */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .header-text {
+        text-align: center;
+    }
+    .header-image-box {
+        justify-content: center;
+    }
 }
 
 /* ==========================================================================
@@ -86,8 +98,6 @@ header p {
 nav {
     display: flex;
     justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
     gap: 20px;
     background-color: #ffffff;
     padding: 15px;
@@ -95,7 +105,6 @@ nav {
     top: 0;
     z-index: 100;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    width: 100%;
 }
 
 .nav-btn {
@@ -105,17 +114,11 @@ nav {
     padding: 8px 16px;
     border-radius: 20px;
     transition: all 0.3s ease;
-    white-space: nowrap;
 }
 
 .nav-btn:hover {
     background-color: #e8c5c8;
     color: white;
-}
-
-.nav-btn.active-nav {
-    border-bottom: 2px solid #b56c70;
-    border-radius: 0;
 }
 
 /* ==========================================================================
@@ -133,7 +136,6 @@ nav {
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(181, 108, 112, 0.05);
-    width: 100%;
 }
 
 .about-img {
@@ -142,7 +144,7 @@ nav {
     object-fit: cover;
     border-radius: 50%;
     border: 5px solid #f4ece1;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Verhindert, dass das Bild gequetscht wird */
 }
 
 .about-text h2 {
@@ -150,8 +152,19 @@ nav {
     margin-bottom: 15px;
 }
 
+.about-text p {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .about-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
 /* ==========================================================================
-   5. ALBEN & DIASHOW
+   5. ALBEN & BILDER-GALERIE
    ========================================================================== */
 .album-section h2 {
     font-size: 2rem;
@@ -160,23 +173,78 @@ nav {
     text-align: center;
 }
 
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.gallery-item {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(181, 108, 112, 0.15);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.item-info {
+    padding: 20px;
+}
+
+.item-info h3 {
+    font-size: 1.2rem;
+    color: #4a3f35;
+    margin-bottom: 5px;
+}
+
+.item-info p {
+    font-size: 0.9rem;
+    color: #9c8e80;
+}
+
+/* ==========================================================================
+   6. FOOTER (FUSSZEILE)
+   ========================================================================== */
+footer {
+    text-align: center;
+    padding: 40px;
+    background-color: #f4ece1;
+    color: #7a6f62;
+    font-size: 0.9rem;
+    margin-top: 60px;
+    border-top: 1px solid #e8c5c8;
+}
+/* ==========================================================================
+   7. AUTOMATISCHE DIASHOW
+   ========================================================================== */
 .slideshow-section {
-    max-width: 800px;
+    max-width: 800px; /* Begrenzt die Breite der Diashow, damit sie edel aussieht */
     margin: 40px auto 20px auto;
     padding: 0 20px;
-    width: 100%;
 }
 
 .slideshow-container {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 400px; /* Feste Höhe für ein einheitliches Bild */
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     background-color: #f4ece1;
 }
 
+/* Versteckt die Slides standardmäßig */
 .mySlides {
     display: none;
     width: 100%;
@@ -186,9 +254,10 @@ nav {
 .mySlides img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: contain; /* Schneidet die Bilder sauber zu, ohne sie zu verzerren */
 }
 
+/* Text auf den Bildern */
 .slide-text {
     color: #ffffff;
     font-size: 1.1rem;
@@ -196,10 +265,12 @@ nav {
     position: absolute;
     bottom: 20px;
     left: 20px;
-    background-color: rgba(74, 63, 53, 0.8);
+    background-color: rgba(74, 63, 53, 0.8); /* Weicher Braunton mit Transparenz */
     border-radius: 20px;
+    font-family: sans-serif;
 }
 
+/* Sanfter Überblend-Effekt (Animation) */
 .fade {
     animation-name: fadeEffect;
     animation-duration: 1.5s;
@@ -210,13 +281,77 @@ nav {
     to { opacity: 1; }
 }
 
+/* Anpassung für kleine Handys */
+@media (max-width: 600px) {
+    .slideshow-container {
+        height: 250px; /* Auf Handys etwas flacher */
+    }
+    .slide-text {
+        font-size: 0.9rem;
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 16px;
+    }
+}
 /* ==========================================================================
-   6. DIE NEUE GALERIE (FEST VERANKERTES GRID FÜR PC)
+   8. GALERIE FILTERS & LAYOUT
+   ========================================================================== */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0 50px 0;
+}
+
+.filter-btn {
+    background-color: white;
+    color: #7a6f62;
+    border: 2px solid #f4ece1;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.02);
+}
+
+.filter-btn:hover {
+    background-color: #f4ece1;
+    color: #4a3f35;
+}
+
+/* Wenn der Button ausgewählt ist */
+.filter-btn.active {
+    background-color: #b56c70; /* Das edle Altrosa */
+    color: white;
+    border-color: #b56c70;
+    box-shadow: 0 4px 12px rgba(181, 108, 112, 0.2);
+}
+
+.gallery-section-block {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: #b56c70;
+    margin-bottom: 25px;
+    border-bottom: 2px dashed #f4ece1;
+    padding-bottom: 10px;
+}
+
+/* Kennzeichnung für den aktiven Navigationspunkt */
+.nav-btn.active-nav {
+    border-bottom: 2px solid #b56c70;
+    border-radius: 0;
+}
+/* ==========================================================================
+   9. PRO-GALERIE DESIGN (DYNAMISCH & ÜBERSICHTLICH)
    ========================================================================== */
 .gallery-controls {
     text-align: center;
     margin: 40px 0 30px 0;
-    padding: 0 10px;
 }
 
 .gallery-intro {
@@ -226,9 +361,10 @@ nav {
     margin-bottom: 20px;
 }
 
+/* Edle Tab-Bar statt klobiger Knöpfe */
 .filter-tab-bar {
     display: inline-flex;
-    background-color: #f4ece1;
+    background-color: #f4ece1; /* Passt zum Header */
     padding: 6px;
     border-radius: 30px;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
@@ -246,37 +382,42 @@ nav {
     transition: all 0.25s ease;
 }
 
+.tab-btn:hover {
+    color: #4a3f35;
+}
+
+/* Der aktive Tab bekommt den edlen Look */
 .tab-btn.active {
-    background-color: #b56c70;
+    background-color: #b56c70; /* Altrosa der Startseite */
     color: white;
     box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
 }
 
-/* Grid-Layout für PC: Erzwingt perfekte Kachelreihen */
+/* Neues, kompaktes Grid */
 .pro-gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 25px;
     padding-bottom: 40px;
-    width: 100%;
 }
 
-/* Einzelne Bildkarten (Kompakt gebremst am PC) */
+/* Die einzelnen Bildkarten */
 .gallery-card {
     background-color: white;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
     border: 1px solid rgba(244, 236, 225, 0.5);
-    width: 100%;
 }
 
+/* Hover-Effekt: Karte hebt sich leicht ab */
 .gallery-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 25px rgba(181, 108, 112, 0.12);
 }
 
+/* Bild-Container für Zoom-Effekt */
 .card-image-wrapper {
     width: 100%;
     height: 240px;
@@ -287,12 +428,20 @@ nav {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
+.gallery-card:hover .card-image-wrapper img {
+    transform: scale(1.06); /* Bild zoomt ganz leicht rein beim Drüberfahren */
+}
+
+/* Textbereich unter den Bildern */
 .card-meta {
     padding: 18px;
+    position: relative;
 }
 
+/* Kleines, dezentes Label für die Kategorie */
 .category-tag {
     display: inline-block;
     font-size: 0.75rem;
@@ -309,85 +458,26 @@ nav {
     margin-bottom: 6px;
 }
 
-/* ==========================================================================
-   7. FOOTER
-   ========================================================================== */
-footer {
-    text-align: center;
-    padding: 40px;
-    background-color: #f4ece1;
-    color: #7a6f62;
-    font-size: 0.9rem;
-    margin-top: 60px;
-    border-top: 1px solid #e8c5c8;
-    width: 100%;
+.card-meta p {
+    font-size: 0.88rem;
+    color: #8c7e70;
+    line-height: 1.4;
 }
 
-/* ==========================================================================
-   8. MOBIL-ANPASSUNGEN (NUR AUF HANDYS AKTIV)
-   ========================================================================== */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-    
-    header h1 { font-size: 2.2rem; }
-    header p { font-size: 1rem; }
-    .header-image-box { justify-content: center; width: 100%; }
-    .header-img { max-height: 160px; }
-
-    nav, header + nav {
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 10px !important;
-        padding: 15px !important;
-    }
-
-    .nav-btn {
-        width: 100%;
-        max-width: 300px;
-        text-align: center;
-        background-color: #fcf9f5;
-        padding: 10px;
-    }
-    
-    .nav-btn.active-nav {
-        border-bottom: none;
-        background-color: #e8c5c8;
-        color: white;
-    }
-
-    .about-container {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-        gap: 20px;
-    }
-
-    .about-img { width: 180px; height: 180px; }
-    .slideshow-container { height: 240px; }
-
+/* Perfekte Anpassung für mobile Handys */
+@media (max-width: 500px) {
     .filter-tab-bar {
         display: flex;
         flex-direction: column;
         width: 100%;
-        max-width: 320px;
-        margin: 0 auto;
         border-radius: 15px;
-        gap: 5px;
     }
-
     .tab-btn {
-        width: 100%;
-        padding: 10px;
-        text-align: center;
+        padding: 8px 15px;
+        font-size: 0.9rem;
     }
-
-    /* Auf Handys alles sauber in eine Reihe untereinander bringen */
     .pro-gallery-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr; /* Auf winzigen Bildschirmen alles untereinander */
         gap: 20px;
     }
 }

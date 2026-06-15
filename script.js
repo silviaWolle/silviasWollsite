@@ -1,18 +1,8 @@
 // ==========================================================================
-// FIREBASE CONFIG (Direkt mit deinen Projektdaten ausgefüllt)
+// FIREBASE INITIALISIERUNG (Bereinigt: Config wird global vorausgesetzt)
 // ==========================================================================
-const firebaseConfig = {
-    apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
-    authDomain: "mamadatenbank.firebaseapp.com",
-    projectId: "mamadatenbank",
-    storageBucket: "mamadatenbank.firebasestorage.app",
-    messagingSenderId: "1098331655605",
-    appId: "1:1098331655605:web:0129125b707678202addfc",
-    measurementId: "G-3C3FW8JDWK"
-};
-
-// Firebase initialisieren, falls es nicht schon läuft
-if (!firebase.apps.length) {
+// Falls firebaseConfig schon existiert, initialisieren wir es hier, falls nicht geschehen.
+if (typeof firebaseConfig !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 

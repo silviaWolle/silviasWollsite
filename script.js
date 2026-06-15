@@ -1,25 +1,24 @@
 // ==========================================================================
-// CONFIG: Hier wird die Verbindung zu deiner Firebase-Datenbank hergestellt
+// FIREBASE CONFIG (Direkt mit deinen Projektdaten ausgefüllt)
 // ==========================================================================
 const firebaseConfig = {
-    apiKey: "DEIN_API_KEY",
-    authDomain: "DEIN_PROJEKT.firebaseapp.com",
-    projectId: "DEIN_PROJEKT_ID",
-    storageBucket: "DEIN_PROJEKT.appspot.com",
-    messagingSenderId: "DEINE_SENDER_ID",
-    appId: "DEINE_APP_ID"
+    apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
+    authDomain: "mamadatenbank.firebaseapp.com",
+    projectId: "mamadatenbank",
+    storageBucket: "mamadatenbank.firebasestorage.app",
+    messagingSenderId: "1098331655605",
+    appId: "1:1098331655605:web:0129125b707678202addfc",
+    measurementId: "G-3C3FW8JDWK"
 };
 
-// Firebase initialisieren (Das ist der Befehl, nach dem der Browser schreit!)
+// Firebase initialisieren, falls es nicht schon läuft
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
 // ==========================================================================
-// AB HIER FOLGT DEIN BESTEHENDER CODE
+// SEITEN-LOGIK STARTET HIER
 // ==========================================================================
-document.addEventListener("DOMContentLoaded", () => {
-    // ... hier geht dein Code ganz normal weiter wie bisher ...
 document.addEventListener("DOMContentLoaded", () => {
     
     // ==========================================================================
@@ -117,11 +116,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     firebaseContainer.appendChild(neueKarte);
                 });
                 
-                // Aktualisiert die Filteransicht direkt nach dem Laden neuer Daten
+                // Filter aktualisieren, falls einer aktiv ist
                 const aktiverButton = document.querySelector('.tab-btn.active');
                 if (aktiverButton) {
-                    const filterTyp = aktiverButton.getAttribute('onclick').match(/'([^']+)'/)[1];
-                    wendeFilterAn(filterTyp);
+                    const onclickAttr = aktiverButton.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const filterTyp = onclickAttr.match(/'([^']+)'/)[1];
+                        wendeFilterAn(filterTyp);
+                    }
                 }
             }, (error) => {
                 console.error("Fehler beim Laden der Firebase-Bilder: ", error);
@@ -129,14 +131,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================================================
-    // 4. FIREBASE BILD-UPLOAD LOGIK (NEU FÜR ADMIN.HTML)
+    // 4. FIREBASE BILD-UPLOAD LOGIK (FÜR ADMIN.HTML)
     // ==========================================================================
     const uploadForm = document.getElementById("upload-form");
     const uploadMessage = document.getElementById("upload-message");
 
     if (uploadForm) {
         uploadForm.addEventListener("submit", (event) => {
-            event.preventDefault(); // Verhindert Neuladen der Seite
+            event.preventDefault();
 
             const titel = document.getElementById("bild-titel").value;
             const kategorie = document.getElementById("bild-kategorie").value;
@@ -151,17 +153,13 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadMessage.style.color = "orange";
             uploadMessage.textContent = "Bild wird hochgeladen... Bitte warten...";
 
-            // 1. Pfad im Firebase Storage definieren (Ordner "galerie/" + Zeitstempel + Dateiname)
             const speicherPfad = firebase.storage().ref("galerie/" + Date.now() + "_" + datei.name);
 
-            // 2. Datei in den Storage hochladen
             speicherPfad.put(datei)
                 .then((snapshot) => {
-                    // 3. Download-URL vom hochgeladenen Bild holen
                     return snapshot.ref.getDownloadURL();
                 })
                 .then((downloadUrl) => {
-                    // 4. Eintrag in die Firestore-Datenbank schreiben
                     return firebase.firestore().collection("bilder").add({
                         titel: titel,
                         kategorie: kategorie,
@@ -170,13 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 })
                 .then(() => {
-                    // Erfolg
                     uploadMessage.style.color = "green";
                     uploadMessage.textContent = "Bild erfolgreich hochgeladen und zur Galerie hinzugefügt!";
-                    uploadForm.reset(); // Formular für den nächsten Upload leeren
+                    uploadForm.reset();
                 })
                 .catch((error) => {
-                    // Fehlerbehandlung
                     console.error("Upload-Fehler: ", error);
                     uploadMessage.style.color = "#b56c70";
                     uploadMessage.textContent = "Fehler beim Upload: " + error.message;
@@ -186,9 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================================================
-// 5. FILTER-FUNKTION (Global verfügbar für die HTML-Buttons)
+// 5. FILTER-FUNKTION (Global für die HTML-Buttons registriert)
 // ==========================================================================
-function neuerFilter(kategorie) {
+window.neuerFilter = function(kategorie) {
     const buttons = document.querySelectorAll(".tab-btn");
     buttons.forEach(btn => btn.classList.remove("active"));
     
@@ -198,7 +194,7 @@ function neuerFilter(kategorie) {
     }
 
     wendeFilterAn(kategorie);
-}
+};
 
 function wendeFilterAn(kategorie) {
     const alleKarten = document.querySelectorAll(".gallery-card");

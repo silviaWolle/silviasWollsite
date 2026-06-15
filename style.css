@@ -9,8 +9,8 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fcf9f5; /* Warmes Wollweiß */
-    color: #4a3f35; /* Weicher Braun-Grau-Ton */
+    background-color: #fcf9f5;
+    color: #4a3f35;
     line-height: 1.6;
 }
 
@@ -29,12 +29,12 @@ body {
 }
 
 /* ==========================================================================
-   2. HEADER (KOPFBEREICH) - Flexibel für PC & Handy
+   2. HEADER (KOPFBEREICH)
    ========================================================================== */
 header {
-    background-color: #f4ece1; /* Sanfter Sandton */
+    background-color: #f4ece1;
     padding: 40px 20px;
-    border-bottom: 3px dashed #e8c5c8; /* Genähte Kante */
+    border-bottom: 3px dashed #e8c5c8;
 }
 
 .header-container {
@@ -54,7 +54,7 @@ header {
 
 header h1 {
     font-size: 3rem;
-    color: #b56c70; /* Edles Altrosa */
+    color: #b56c70;
     margin-bottom: 10px;
     font-weight: 300;
     letter-spacing: 1px;
@@ -81,13 +81,13 @@ header p {
 }
 
 /* ==========================================================================
-   3. NAVIGATION (STICKY-BAR OBEN)
+   3. NAVIGATION
    ========================================================================== */
 nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-wrap: wrap; /* Erlaubt Umbruch, falls es eng wird */
+    flex-wrap: wrap;
     gap: 20px;
     background-color: #ffffff;
     padding: 15px;
@@ -105,7 +105,7 @@ nav {
     padding: 8px 16px;
     border-radius: 20px;
     transition: all 0.3s ease;
-    white-space: nowrap; /* Verhindert hässliche Zeilenumbrüche im Button-Text */
+    white-space: nowrap;
 }
 
 .nav-btn:hover {
@@ -147,10 +147,6 @@ nav {
 
 .about-text h2 {
     color: #b56c70;
-    margin-bottom: 15px;
-}
-
-.about-text p {
     margin-bottom: 15px;
 }
 
@@ -215,7 +211,7 @@ nav {
 }
 
 /* ==========================================================================
-   6. GALERIE TABS & EXPERTEN-GRID (DYNAMISCH)
+   6. BILDER-GALERIE GRID (PC & DEFAULT LOOK)
    ========================================================================== */
 .gallery-controls {
     text-align: center;
@@ -256,10 +252,10 @@ nav {
     box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
 }
 
+/* DAS RIEGELT DIE GRÖSSE AM PC AB: */
 .pro-gallery-grid {
     display: grid;
-    /* Am PC werden die Kacheln automatisch nebeneinander angeordnet */
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important; /* Erzwingt mehrere Spalten am PC */
     gap: 25px;
     padding-bottom: 40px;
     width: 100%;
@@ -270,8 +266,9 @@ nav {
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid rgba(244, 236, 225, 0.5);
+    width: 100%;
 }
 
 .gallery-card:hover {
@@ -281,7 +278,7 @@ nav {
 
 .card-image-wrapper {
     width: 100%;
-    height: 240px;
+    height: 240px; /* Begrenzt die Höhe des Bildes in der Karte */
     overflow: hidden;
 }
 
@@ -289,11 +286,6 @@ nav {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.gallery-card:hover .card-image-wrapper img {
-    transform: scale(1.06);
 }
 
 .card-meta {
@@ -317,7 +309,7 @@ nav {
 }
 
 /* ==========================================================================
-   7. FOOTER (FUSSZEILE)
+   7. FOOTER
    ========================================================================== */
 footer {
     text-align: center;
@@ -331,35 +323,21 @@ footer {
 }
 
 /* ==========================================================================
-   8. ECHTE HANDY-ANPASSUNG (AUTOMATISCH REAGIEREND BEI SCHMALEN SCREENS)
+   8. MOBIL-ANPASSUNGEN (NUR FÜR HANDYS UNTER 768px BREITE)
    ========================================================================== */
 @media (max-width: 768px) {
-    /* Header stapeln & zentrieren */
     .header-container {
         flex-direction: column;
         text-align: center;
         gap: 15px;
     }
     
-    header h1 {
-        font-size: 2.2rem;
-    }
+    header h1 { font-size: 2.2rem; }
+    header p { font-size: 1rem; }
+    .header-image-box { justify-content: center; width: 100%; }
+    .header-img { max-height: 160px; }
 
-    header p {
-        font-size: 1rem;
-    }
-
-    .header-image-box {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .header-img {
-        max-height: 160px;
-    }
-
-    /* Menüpunkte untereinander stapeln, damit nichts herausbricht */
-    nav, header + nav {
+    nav {
         flex-direction: column !important;
         align-items: center !important;
         gap: 10px !important;
@@ -370,9 +348,8 @@ footer {
         width: 100%;
         max-width: 300px;
         text-align: center;
-        background-color: #fcf9f5; /* Macht Knöpfe auf dem Handy besser erkennbar */
+        background-color: #fcf9f5;
         padding: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
     
     .nav-btn.active-nav {
@@ -381,7 +358,6 @@ footer {
         color: white;
     }
 
-    /* Über mich Bereich untereinander */
     .about-container {
         flex-direction: column;
         text-align: center;
@@ -389,24 +365,9 @@ footer {
         gap: 20px;
     }
 
-    .about-img {
-        width: 180px;
-        height: 180px;
-    }
+    .about-img { width: 180px; height: 180px; }
+    .slideshow-container { height: 240px; }
 
-    /* Diashow flacher machen */
-    .slideshow-container {
-        height: 240px;
-    }
-    
-    .slide-text {
-        font-size: 0.85rem;
-        padding: 6px 12px;
-        bottom: 10px;
-        left: 10px;
-    }
-
-    /* Galerie Filter-Bar auf volle Breite */
     .filter-tab-bar {
         display: flex;
         flex-direction: column;
@@ -423,7 +384,7 @@ footer {
         text-align: center;
     }
 
-    /* Auf winzigen Handys Bilder untereinander anzeigen */
+    /* Auf Handys schrumpfen wir das Grid auf eine handliche Spalte */
     .pro-gallery-grid {
         grid-template-columns: 1fr !important;
         gap: 20px;

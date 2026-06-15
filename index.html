@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script defer src="script.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Silvias Handarbeits Website</title>
@@ -21,21 +23,17 @@
         </div>
     </header>
 
-    <!-- Navigation -->
     <nav>
         <a href="#ueber-mich" class="nav-btn">Über mich</a>
         <a href="#haekeln" class="nav-btn">Meine neuesten Häkelarbeiten</a>
         <a href="#stricken" class="nav-btn">Meine neuesten Strickarbeiten</a>
         <a href="index.html" class="nav-btn">Startseite / Über mich</a>
         <a href="galerie.html" class="nav-btn">Bildergalerie</a>
-        <!-- HIER IST DEIN NEUER BUTTON -->
         <a href="login.html" class="nav-btn">Mitglieder-Login</a>
     </nav>
 
-    <!-- Hauptbereich (Main Container) -->
     <main class="container">
 
-        <!-- SEKTION: ÜBER MICH -->
         <section id="ueber-mich" class="about-section">
             <div class="about-container">
                 <img src="mama.jpg" alt="Mama bei der Handarbeit" class="about-img">
@@ -74,9 +72,10 @@
             </section>
         </section>
 
+        <div id="highlight-container" style="display: none; margin-top: 40px;"></div>
+
         <hr class="trenner">
 
-        <!-- KATEGORIE: HÄKELN -->
         <section id="haekeln" class="album-section">
             <h2>edeles Gehäkeltes</h2>
             <div class="gallery-grid">
@@ -125,7 +124,6 @@
 
         <hr class="trenner">
 
-        <!-- KATEGORIE: STRICKEN -->
         <section id="stricken" class="album-section">
             <h2>kuschliges Gestricktes</h2>
             <div class="gallery-grid">
@@ -150,10 +148,21 @@
 
     </main>
 
-    <!-- Fußzeile -->
     <footer>
         <p>&copy; 2026 Erstellt mit Liebe für Mama</p>
     </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
+            authDomain: "mamadatenbank.firebaseapp.com",
+            projectId: "mamadatenbank",
+            storageBucket: "mamadatenbank.firebasestorage.app",
+            messagingSenderId: "1098331655605",
+            appId: "1:1098331655605:web:0129125b707678202addfc",
+            measurementId: "G-3C3FW8JDWK"
+        };
+    </script>
 
 </body>
 </html>

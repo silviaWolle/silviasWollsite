@@ -1,3 +1,4 @@
+
 // ==========================================================================
 // FIREBASE INITIALISIERUNG
 // ==========================================================================
@@ -54,27 +55,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. BILDER AUS FIREBASE LADEN (Für Galerie & Admin-Vorschau)
     // ==========================================================================
     const firebaseContainer = document.getElementById("bilder-container");
-    const adminBilderContainer = document.getElementById("admin-bilder-liste"); // NEU: Container für Admin-Löschliste
+    const adminBilderContainer = document.getElementById("admin-bilder-liste"); 
 
     if (firebaseContainer || adminBilderContainer) {
         firebase.firestore().collection("bilder").orderBy("hochgeladenAm", "desc")
             .onSnapshot((snapshot) => {
                 
-                // Falls wir auf der Galerie-Seite sind
                 if (firebaseContainer) {
                     firebaseContainer.innerHTML = "";
                 }
-                // Falls wir auf der Admin-Seite sind
                 if (adminBilderContainer) {
                     adminBilderContainer.innerHTML = "";
                 }
                 
                 snapshot.forEach((doc) => {
                     const daten = doc.data();
-                    const docId = doc.id; // Die einzigartige Firebase-ID des Bildes
+                    const docId = doc.id; 
                     const tagAnzeige = daten.kategorie === "haekeln" ? "Häkeln" : "Stricken";
+                    const istHighlight = daten.isHighlight === true;
                     
-                    // Variante A: Für die normale Galerie-Seite
                     if (firebaseContainer) {
                         const neueKarte = document.createElement("div");
                         neueKarte.classList.add("gallery-card", daten.kategorie);
@@ -90,10 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         firebaseContainer.appendChild(neueKarte);
                     }
 
-                    // Variante B: Für die Admin-Verwaltungsliste mit LÖSCH-BUTTON
                     if (adminBilderContainer) {
                         const adminKarte = document.createElement("div");
                         adminKarte.className = "admin-delete-card";
+                        
+                        const sternFarbe = istHighlight ? "#FFD700" : "#ccc";
+                        const sternRand = istHighlight ? "2px solid #FFD700" : "1px solid #f4ece1";
+                        const sternTitel = istHighlight ? "Aktuelles Highlight auf Startseite" : "Als Highlight auf Startseite setzen";
+
                         adminKarte.style = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #f4ece1; border-radius: 8px; background: white; margin-bottom: 10px; gap: 15px;";
                         
                         adminKarte.innerHTML = `
@@ -104,15 +107,19 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <small style="color: #a89f91;">${tagAnzeige}</small>
                                 </div>
                             </div>
-                            <button onclick="loescheBild('${docId}', '${daten.url}')" style="background: #b56c70; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
-                                Löschen
-                            </button>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <button onclick="setzeHighlight('${docId}')" title="${sternTitel}" style="background: white; border: ${sternRand}; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: all 0.2s;">
+                                    <span style="color: ${sternFarbe};">&#9733;</span>
+                                </button>
+                                <button onclick="loescheBild('${docId}', '${daten.url}')" style="background: #b56c70; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                                    Löschen
+                                </button>
+                            </div>
                         `;
                         adminBilderContainer.appendChild(adminKarte);
                     }
                 });
                 
-                // Filter triggern falls auf Galerie-Seite vorhanden
                 const aktiverButton = document.querySelector('.tab-btn.active');
                 if (firebaseContainer && aktiverButton) {
                     const onclickAttr = aktiverButton.getAttribute('onclick');
@@ -122,6 +129,86 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             });
+    }
+
+    // ==========================================================================
+    // ABSOLUT ROBUSTE DRAG & DROP LOGIK & BILDVORSCHAU (FÜR ADMIN.HTML)
+    // ==========================================================================
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("bild-datei");
+    const previewBox = document.getElementById("preview-box");
+    const imagePreview = document.getElementById("image-preview");
+    const removePreviewBtn = document.getElementById("remove-preview-btn");
+    const dragZoneText = document.getElementById("drag-zone-text");
+
+    if (dropZone && fileInput) {
+        
+        // Verhindert global im ganzen Browser-Fenster das automatische Öffnen von reingezogenen Bildern
+        window.addEventListener("dragover", (e) => { e.preventDefault(); }, false);
+        window.addEventListener("drop", (e) => { e.preventDefault(); }, false);
+
+        // Visueller Effekt, wenn die Datei über das gestrichelte Feld gehalten wird
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('dragover');
+            }, false);
+        });
+
+        // Visueller Effekt verschwindet wieder
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+            }, false);
+        });
+
+        // WICHTIG: Fängt die Datei ab, wenn sie auf dem Feld losgelassen wird!
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dt = e.dataTransfer;
+            const dateien = dt.files;
+
+            if (dateien && dateien.length > 0) {
+                fileInput.files = dateien; // Schreibt die Datei ins unsichtbare Datei-Input
+                zeigeBildVorschau();       // Löst die Bildvorschau aus
+            }
+        });
+
+        // Fallback: Wenn man ganz normal auf das Feld klickt und eine Datei auswählt
+        fileInput.addEventListener('change', zeigeBildVorschau);
+
+        function zeigeBildVorschau() {
+            const datei = fileInput.files[0];
+            if (datei && datei.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.readAsDataURL(datei);
+                reader.onloadend = () => {
+                    imagePreview.src = reader.result;
+                    previewBox.style.display = "flex";
+                    dragZoneText.textContent = `✅ ${datei.name} ausgewählt!`;
+                }
+            } else {
+                versteckeVorschau();
+            }
+        }
+
+        if (removePreviewBtn) {
+            removePreviewBtn.addEventListener('click', () => {
+                versteckeVorschau();
+            });
+        }
+
+        function versteckeVorschau() {
+            fileInput.value = ""; 
+            imagePreview.src = "";
+            previewBox.style.display = "none";
+            dragZoneText.textContent = "📂 Datei hierher ziehen oder anklicken zum Auswählen";
+        }
     }
 
     // ==========================================================================
@@ -136,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const titel = document.getElementById("bild-titel").value;
             const kategorie = document.getElementById("bild-kategorie").value;
-            const datei = document.getElementById("bild-datei").files[0];
+            const datei = fileInput.files[0];
 
             if (!datei) {
                 uploadMessage.style.color = "#b56c70";
@@ -147,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadMessage.style.color = "orange";
             uploadMessage.textContent = "Bild wird hochgeladen... Bitte warten...";
 
-            // Wir speichern den echten Dateinamen im Pfad, um ihn später gezielt löschen zu können
             const dateiName = Date.now() + "_" + datei.name;
             const speicherPfad = firebase.storage().ref("galerie/" + dateiName);
 
@@ -158,7 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         titel: titel,
                         kategorie: kategorie,
                         url: downloadUrl,
-                        storagePath: "galerie/" + dateiName, // NEU: Pfad merken fürs Löschen
+                        storagePath: "galerie/" + dateiName, 
+                        isHighlight: false, 
                         hochgeladenAm: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
@@ -166,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     uploadMessage.style.color = "green";
                     uploadMessage.textContent = "Bild erfolgreich hochgeladen!";
                     uploadForm.reset();
+                    if (typeof versteckeVorschau === "function") versteckeVorschau(); 
                 })
                 .catch((error) => {
                     uploadMessage.style.color = "#b56c70";
@@ -173,27 +261,55 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         });
     }
+
+    // ==========================================================================
+    // HIGHLIGHT LIVE AUF DER STARTSEITE AUSLESEN
+    // ==========================================================================
+    const highlightContainer = document.getElementById("highlight-container");
+    if (highlightContainer) {
+        firebase.firestore().collection("bilder").where("isHighlight", "==", true).limit(1)
+            .onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    highlightContainer.style.display = "none";
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const daten = doc.data();
+                    const tagAnzeige = daten.kategorie === "haekeln" ? "Häkeln" : "Stricken";
+                    highlightContainer.style.display = ""; 
+                    
+                    highlightContainer.innerHTML = `
+                        <div class="about-container" style="gap: 30px; margin-top: 20px;">
+                            <img src="${daten.url}" alt="${daten.titel}" class="about-img" style="border-radius: 15px; width: 300px; height: 300px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            <div class="about-text">
+                                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: #b56c70; font-weight: bold; display: block; margin-bottom: 5px;">${tagAnzeige} des Monats</span>
+                                <h2 style="margin-top: 0;">${daten.titel}</h2>
+                                <p>Dieses Prachtstück habe ich aktuell als mein persönliches Lieblingswerk ausgewählt! Schau auch gerne in der Galerie vorbei, um noch mehr Kreationen zu entdecken.</p>
+                                <a href="galerie.html" class="nav-btn active-nav" style="display: inline-block; margin-top: 10px; text-decoration: none;">Zur gesamten Galerie</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+    }
 });
 
 // ==========================================================================
-// 5. GLOBALE LÖSCH-FUNKTION (NEU)
+// 5. GLOBALE LÖSCH-FUNKTION
 // ==========================================================================
 window.loescheBild = function(docId, bildUrl) {
     if (confirm("Möchtest du dieses Bild wirklich unwiderruflich löschen?")) {
         
-        // Erst aus der Text-Datenbank entfernen
         firebase.firestore().collection("bilder").doc(docId).get()
             .then((doc) => {
                 if (doc.exists && doc.data().storagePath) {
-                    // Wenn wir den direkten Pfad haben, löschen wir die Datei im Storage
                     return firebase.storage().ref(doc.data().storagePath).delete();
                 } else {
-                    // Altes Fallback, falls kein Pfad existiert (löscht über die URL)
                     return firebase.storage().refFromURL(bildUrl).delete();
                 }
             })
             .then(() => {
-                // Danach den Eintrag aus Firestore löschen
                 return firebase.firestore().collection("bilder").doc(docId).delete();
             })
             .then(() => {
@@ -201,10 +317,35 @@ window.loescheBild = function(docId, bildUrl) {
             })
             .catch((error) => {
                 console.error("Fehler beim Löschen: ", error);
-                // Falls die Datei im Storage nicht gefunden wurde, trotzdem aus Firestore löschen
                 firebase.firestore().collection("bilder").doc(docId).delete();
             });
     }
+};
+
+// ==========================================================================
+// GLOBALE HIGHLIGHT-SCHALT-FUNKTION FOR ADMIN
+// ==========================================================================
+window.setzeHighlight = function(neuesHighlightId) {
+    const db = firebase.firestore();
+    
+    db.collection("bilder").where("isHighlight", "==", true).get()
+        .then((snapshot) => {
+            const batch = db.batch();
+            
+            snapshot.forEach((doc) => {
+                batch.update(db.collection("bilder").doc(doc.id), { isHighlight: false });
+            });
+            
+            batch.update(db.collection("bilder").doc(neuesHighlightId), { isHighlight: true });
+            
+            return batch.commit();
+        })
+        .then(() => {
+            console.log("Highlight erfolgreich gewechselt!");
+        })
+        .catch((error) => {
+            console.error("Fehler beim Wechseln des Highlights: ", error);
+        });
 };
 
 // ==========================================================================

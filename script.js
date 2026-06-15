@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     const daten = doc.data();
                     
                     const neueKarte = document.createElement("div");
-                    // Nutzt exakt 'haekeln' oder 'stricken' für CSS-Klassen
                     neueKarte.classList.add("gallery-card", daten.kategorie);
                     
                     const tagAnzeige = daten.kategorie === "haekeln" ? "Häkeln" : "Stricken";
@@ -106,38 +105,90 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Fehler beim Laden der Firebase-Bilder: ", error);
             });
     }
+
+    // ==========================================================================
+    // 4. FIREBASE BILD-UPLOAD LOGIK (NEU FÜR ADMIN.HTML)
+    // ==========================================================================
+    const uploadForm = document.getElementById("upload-form");
+    const uploadMessage = document.getElementById("upload-message");
+
+    if (uploadForm) {
+        uploadForm.addEventListener("submit", (event) => {
+            event.preventDefault(); // Verhindert Neuladen der Seite
+
+            const titel = document.getElementById("bild-titel").value;
+            const kategorie = document.getElementById("bild-kategorie").value;
+            const datei = document.getElementById("bild-datei").files[0];
+
+            if (!datei) {
+                uploadMessage.style.color = "#b56c70";
+                uploadMessage.textContent = "Bitte wähle zuerst ein Bild aus.";
+                return;
+            }
+
+            uploadMessage.style.color = "orange";
+            uploadMessage.textContent = "Bild wird hochgeladen... Bitte warten...";
+
+            // 1. Pfad im Firebase Storage definieren (Ordner "galerie/" + Zeitstempel + Dateiname)
+            const speicherPfad = firebase.storage().ref("galerie/" + Date.now() + "_" + datei.name);
+
+            // 2. Datei in den Storage hochladen
+            speicherPfad.put(datei)
+                .then((snapshot) => {
+                    // 3. Download-URL vom hochgeladenen Bild holen
+                    return snapshot.ref.getDownloadURL();
+                })
+                .then((downloadUrl) => {
+                    // 4. Eintrag in die Firestore-Datenbank schreiben
+                    return firebase.firestore().collection("bilder").add({
+                        titel: titel,
+                        kategorie: kategorie,
+                        url: downloadUrl,
+                        hochgeladenAm: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    // Erfolg
+                    uploadMessage.style.color = "green";
+                    uploadMessage.textContent = "Bild erfolgreich hochgeladen und zur Galerie hinzugefügt!";
+                    uploadForm.reset(); // Formular für den nächsten Upload leeren
+                })
+                .catch((error) => {
+                    // Fehlerbehandlung
+                    console.error("Upload-Fehler: ", error);
+                    uploadMessage.style.color = "#b56c70";
+                    uploadMessage.textContent = "Fehler beim Upload: " + error.message;
+                });
+        });
+    }
 });
 
 // ==========================================================================
-// 4. FILTER-FUNKTION (Global verfügbar für die HTML-Buttons)
+// 5. FILTER-FUNKTION (Global verfügbar für die HTML-Buttons)
 // ==========================================================================
 function neuerFilter(kategorie) {
-    // 1. Aktiv-Status bei den Buttons umschalten
     const buttons = document.querySelectorAll(".tab-btn");
     buttons.forEach(btn => btn.classList.remove("active"));
     
-    // Sucht den geklickten Button anhand des onclick-Attributs
     const geklickterButton = document.querySelector(`[onclick="neuerFilter('${kategorie}')"]`);
     if (geklickterButton) {
         geklickterButton.classList.add("active");
     }
 
-    // 2. Filter auf alle Karten anwenden
     wendeFilterAn(kategorie);
 }
 
-// Hilfsfunktion, die das Ein- und Ausblenden übernimmt
 function wendeFilterAn(kategorie) {
     const alleKarten = document.querySelectorAll(".gallery-card");
     
     alleKarten.forEach(karte => {
         if (kategorie === "alle") {
-            karte.style.display = "block"; // Zeige alles
+            karte.style.display = "block";
         } else {
             if (karte.classList.contains(kategorie)) {
-                karte.style.display = "block"; // Gehört zur Kategorie
+                karte.style.display = "block";
             } else {
-                karte.style.display = "none"; // Gehört nicht dazu
+                karte.style.display = "none";
             }
         }
     });

@@ -211,7 +211,7 @@ nav {
 }
 
 /* ==========================================================================
-   6. BILDER-GALERIE & DYNAMISCHES GRID (Kompakt auf PC)
+   6. DIE NEUE GALERIE (FEST VERANKERTES GRID FÜR PC)
    ========================================================================== */
 .gallery-controls {
     text-align: center;
@@ -252,17 +252,17 @@ nav {
     box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
 }
 
-/* Unterstützt altes und neues Grid gleichermaßen */
-.gallery-grid, .pro-gallery-grid, #bilder-container {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important; /* Mehrere Spalten am PC */
+/* Grid-Layout für PC: Erzwingt perfekte Kachelreihen */
+.pro-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 25px;
     padding-bottom: 40px;
     width: 100%;
 }
 
-/* Die einzelnen Bildkarten (mit Riesen-Schutz) */
-.gallery-item, .gallery-card {
+/* Einzelne Bildkarten (Kompakt gebremst am PC) */
+.gallery-card {
     background-color: white;
     border-radius: 16px;
     overflow: hidden;
@@ -270,28 +270,26 @@ nav {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid rgba(244, 236, 225, 0.5);
     width: 100%;
-    max-width: 320px; /* Lässt Bilder am PC NIEMALS riesig werden */
-    margin: 0 auto;
 }
 
-.gallery-item:hover, .gallery-card:hover {
+.gallery-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 25px rgba(181, 108, 112, 0.12);
 }
 
-.card-image-wrapper, .gallery-item img {
+.card-image-wrapper {
     width: 100%;
     height: 240px;
     overflow: hidden;
 }
 
-.card-image-wrapper img, .gallery-item img {
+.card-image-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.item-info, .card-meta {
+.card-meta {
     padding: 18px;
 }
 
@@ -305,7 +303,7 @@ nav {
     margin-bottom: 6px;
 }
 
-.item-info h3, .card-meta h3 {
+.card-meta h3 {
     font-size: 1.15rem;
     color: #4a3f35;
     margin-bottom: 6px;
@@ -326,7 +324,7 @@ footer {
 }
 
 /* ==========================================================================
-   8. MOBIL-ANPASSUNGEN (AUTOMATISCH BEI SMARTPHONES)
+   8. MOBIL-ANPASSUNGEN (NUR AUF HANDYS AKTIV)
    ========================================================================== */
 @media (max-width: 768px) {
     .header-container {
@@ -340,7 +338,6 @@ footer {
     .header-image-box { justify-content: center; width: 100%; }
     .header-img { max-height: 160px; }
 
-    /* Navigationsmenüs untereinander stapeln */
     nav, header + nav {
         flex-direction: column !important;
         align-items: center !important;
@@ -388,8 +385,8 @@ footer {
         text-align: center;
     }
 
-    /* Auf Handys schrumpfen wir das Gitternetz auf 1 Spalte untereinander */
-    .gallery-grid, .pro-gallery-grid, #bilder-container {
+    /* Auf Handys alles sauber in eine Reihe untereinander bringen */
+    .pro-gallery-grid {
         grid-template-columns: 1fr !important;
         gap: 20px;
     }

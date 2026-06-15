@@ -56,6 +56,15 @@
 
             <div id="upload-message" style="font-weight: 600; text-align: center;"></div>
 
+            <div style="margin-top: 40px; width: 100%; border-top: 2px solid #f4ece1; padding-top: 30px;">
+                <h2 style="margin-bottom: 10px;">Bilder verwalten & löschen</h2>
+                <p style="font-size: 0.9rem; color: #a89f91; margin-bottom: 20px;">
+                    Hier sieht deine Mutter alle hochgeladenen Stücke. Ein Klick auf "Löschen" entfernt sie sicher aus der Galerie.
+                </p>
+                
+                <div id="admin-bilder-liste" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+
         </div>
     </main>
 
@@ -64,9 +73,7 @@
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script>

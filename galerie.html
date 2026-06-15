@@ -38,7 +38,7 @@
 
         <div class="pro-gallery-grid">
             
-            <div id="firebase-bilder-container" style="display: contents;"></div>
+            <div id="bilder-container" style="display: contents;"></div>
             
             <div class="gallery-card haekeln">
                 <div class="card-image-wrapper">
@@ -221,6 +221,22 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
+            authDomain: "mamadatenbank.firebaseapp.com",
+            projectId: "mamadatenbank",
+            storageBucket: "mamadatenbank.firebasestorage.app",
+            messagingSenderId: "1098331655605",
+            appId: "1:1098331655605:web:0129125b707678202addfc",
+            measurementId: "G-3C3FW8JDWK"
+        };
+        // Firebase initialisieren, falls es noch nicht läuft
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
 
     <script src="script.js"></script>
 </body>

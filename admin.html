@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Admin-Bereich - Silvias Wollsite</title>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-text">
+                <h1>Admin-Schaltzentrale</h1>
+                <p>Hier könnt ihr die Bildergalerie verwalten</p>
+            </div>
+            <nav style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <a href="index.html" class="nav-btn">Zur Startseite</a>
+                <a href="galerie.html" class="nav-btn">Zur Galerie</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="about-container" style="max-width: 600px; margin: 40px auto; flex-direction: column; gap: 20px;">
+            
+            <h2>Neues Bild hinzufügen</h2>
+            
+            <!-- Upload Formular -->
+            <form id="upload-form" style="width: 100%; display: flex; flex-direction: column; gap: 15px;">
+                
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-weight: 600; color: #7a6f62;">Titel des Bildes</label>
+                    <input type="text" id="bild-titel" required placeholder="Z.B. Süßer Osterhase" 
+                           style="padding: 12px; border: 2px solid #f4ece1; border-radius: 8px;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-weight: 600; color: #7a6f62;">Kategorie</label>
+                    <select id="bild-kategorie" style="padding: 12px; border: 2px solid #f4ece1; border-radius: 8px; background: white;">
+                        <option value="haekeln">Häkeln</option>
+                        <option value="stricken">Stricken</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-weight: 600; color: #7a6f62;">Bild auswählen</label>
+                    <input type="file" id="bild-datei" accept="image/*" required 
+                           style="padding: 10px; border: 2px dashed #7a6f62; border-radius: 8px; background: #fcfaf7;">
+                </div>
+
+                <button type="submit" class="nav-btn active-nav" style="width: 100%; border: none; cursor: pointer; padding: 12px;">
+                    Bild hochladen
+                </button>
+
+            </form>
+
+            <div id="upload-message" style="font-weight: 600; text-align: center;"></div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Admin-Modus aktiv</p>
+    </footer>
+
+</body>
+</html>

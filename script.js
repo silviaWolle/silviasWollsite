@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     
     // ==========================================================================
@@ -8,29 +7,20 @@ document.addEventListener("DOMContentLoaded", () => {
     showSlides();
 
     function showSlides() {
-        // Holt sich alle Elemente mit der Klasse "mySlides"
         const slides = document.getElementsByClassName("mySlides");
-        
-        // Verhindert Fehler auf Seiten ohne Diashow (z.B. Galerie- oder Login-Seite)
         if (slides.length === 0) return; 
 
-        // Versteckt zuerst alle Bilder
         for (let i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";  
         }
         
-        // Springt zum nächsten Bild
         slideIndex++;
-        
-        // Wenn das Ende der Diashow erreicht ist, fang wieder von vorne an
         if (slideIndex > slides.length) {
             slideIndex = 1;
         }    
         
-        // Zeigt das aktuelle Bild an
         slides[slideIndex - 1].style.display = "block";  
         
-        // Ruft die Funktion nach 5000 Millisekunden (5 Sekunden) erneut auf
         setTimeout(() => {
             showSlides();
         }, 5000); 
@@ -46,28 +36,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
-            event.preventDefault(); // Verhindert Neuladen der Seite
+            event.preventDefault();
 
             const email = emailInput.value;
             const password = passwordInput.value;
 
-            // Firebase Login-Befehl
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Erfolg
                     loginMessage.style.color = "green";
                     loginMessage.textContent = "Erfolgreich angemeldet! Weiterleitung...";
                     
-                    // Nach 1,5 Sekunden zur Admin-Seite weiterleiten
                     setTimeout(() => {
                         window.location.href = "admin.html"; 
                     }, 1500);
                 })
                 .catch((error) => {
-                    // Fehlerbehandlung
                     loginMessage.style.color = "#b56c70"; // Altrosa
                     
-                    // "auth/invalid-credential" für neuere Firebase-Standards hinzugefügt
                     if (error.code === "auth/wrong-password" || error.code === "auth/user-not-found" || error.code === "auth/invalid-credential") {
                         loginMessage.textContent = "E-Mail oder Passwort ist falsch.";
                     } else if (error.code === "auth/invalid-email") {
@@ -80,24 +65,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================================================
-    // 3. LIVE-BILDER AUS FIREBASE IN DAS REAL-GRID LADEN
+    // 3. LIVE-BILDER AUS FIREBASE IN DAS GRID LADEN
     // ==========================================================================
     const firebaseContainer = document.getElementById("firebase-bilder-container");
 
     if (firebaseContainer) {
         firebase.firestore().collection("bilder").orderBy("hochgeladenAm", "desc")
             .onSnapshot((snapshot) => {
-                // Den Container leeren, um doppelte Einträge bei Updates zu vermeiden
                 firebaseContainer.innerHTML = "";
                 
                 snapshot.forEach((doc) => {
                     const daten = doc.data();
                     
-                    // Erstellt eine neue Karte mit deinen exakten CSS-Klassen
                     const neueKarte = document.createElement("div");
+                    // Nutzt exakt 'haekeln' oder 'stricken' für CSS-Klassen
                     neueKarte.classList.add("gallery-card", daten.kategorie);
                     
-                    // Schöne Anzeige für das Tag ("Häkeln" statt "haekeln")
                     const tagAnzeige = daten.kategorie === "haekeln" ? "Häkeln" : "Stricken";
                     
                     neueKarte.innerHTML = `
@@ -110,18 +93,52 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     `;
                     
-                    // Ab ins Grid damit!
                     firebaseContainer.appendChild(neueKarte);
                 });
                 
-                // Falls gerade ein Filter aktiv ist, wenden wir ihn kurz neu an,
-                // damit das neue Bild sofort in der richtigen Kategorie landet
+                // Aktualisiert die Filteransicht direkt nach dem Laden neuer Daten
                 const aktiverButton = document.querySelector('.tab-btn.active');
                 if (aktiverButton) {
-                    aktiverButton.click();
+                    const filterTyp = aktiverButton.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    wendeFilterAn(filterTyp);
                 }
             }, (error) => {
                 console.error("Fehler beim Laden der Firebase-Bilder: ", error);
             });
     }
 });
+
+// ==========================================================================
+// 4. FILTER-FUNKTION (Global verfügbar für die HTML-Buttons)
+// ==========================================================================
+function neuerFilter(kategorie) {
+    // 1. Aktiv-Status bei den Buttons umschalten
+    const buttons = document.querySelectorAll(".tab-btn");
+    buttons.forEach(btn => btn.classList.remove("active"));
+    
+    // Sucht den geklickten Button anhand des onclick-Attributs
+    const geklickterButton = document.querySelector(`[onclick="neuerFilter('${kategorie}')"]`);
+    if (geklickterButton) {
+        geklickterButton.classList.add("active");
+    }
+
+    // 2. Filter auf alle Karten anwenden
+    wendeFilterAn(kategorie);
+}
+
+// Hilfsfunktion, die das Ein- und Ausblenden übernimmt
+function wendeFilterAn(kategorie) {
+    const alleKarten = document.querySelectorAll(".gallery-card");
+    
+    alleKarten.forEach(karte => {
+        if (kategorie === "alle") {
+            karte.style.display = "block"; // Zeige alles
+        } else {
+            if (karte.classList.contains(kategorie)) {
+                karte.style.display = "block"; // Gehört zur Kategorie
+            } else {
+                karte.style.display = "none"; // Gehört nicht dazu
+            }
+        }
+    });
+}

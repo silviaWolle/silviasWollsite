@@ -39,15 +39,16 @@
         <div class="pro-gallery-grid">
             
             <div id="bilder-container" style="display: contents;"></div>
-            
-            
-            
 
             <div class="gallery-card haekeln">
                 <div class="card-image-wrapper">
                     <img src="fotos/2.jpeg" alt="Häkelarbeit" loading="lazy">
                 </div>
-               
+                <div class="card-meta">
+                    <span class="category-tag">Häkeln</span>
+                    <h3>Schöne Häkelarbeit</h3>
+                </div>
+            </div>
 
             <div class="gallery-card haekeln">
                 <div class="card-image-wrapper">
@@ -146,6 +147,7 @@
                 </div>
                 <div class="card-meta">
                     <span class="category-tag">Stricken</span>
+                    <h3>schöne Socken</h3>
                 </div>
             </div>
 
@@ -155,6 +157,7 @@
                 </div>
                 <div class="card-meta">
                     <span class="category-tag">Stricken</span>
+                    <h3>bunte Strickarbeit</h3>
                 </div>
             </div>
 
@@ -194,6 +197,7 @@
                 </div>
                 <div class="card-meta">
                     <span class="category-tag">Stricken</span>
+                    <h3>kuscheliges Extra</h3>
                 </div>
             </div>
 
@@ -202,7 +206,7 @@
 
     <footer>
         <p>&copy; 2026 Silvias Handarbeitsgalerie</p>
-    </footer>
+    </</footer>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -219,7 +223,6 @@
             appId: "1:1098331655605:web:0129125b707678202addfc",
             measurementId: "G-3C3FW8JDWK"
         };
-        // Firebase initialisieren, falls es noch nicht läuft
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }

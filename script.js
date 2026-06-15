@@ -1,3 +1,25 @@
+// ==========================================================================
+// CONFIG: Hier wird die Verbindung zu deiner Firebase-Datenbank hergestellt
+// ==========================================================================
+const firebaseConfig = {
+    apiKey: "DEIN_API_KEY",
+    authDomain: "DEIN_PROJEKT.firebaseapp.com",
+    projectId: "DEIN_PROJEKT_ID",
+    storageBucket: "DEIN_PROJEKT.appspot.com",
+    messagingSenderId: "DEINE_SENDER_ID",
+    appId: "DEINE_APP_ID"
+};
+
+// Firebase initialisieren (Das ist der Befehl, nach dem der Browser schreit!)
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// ==========================================================================
+// AB HIER FOLGT DEIN BESTEHENDER CODE
+// ==========================================================================
+document.addEventListener("DOMContentLoaded", () => {
+    // ... hier geht dein Code ganz normal weiter wie bisher ...
 document.addEventListener("DOMContentLoaded", () => {
     
     // ==========================================================================

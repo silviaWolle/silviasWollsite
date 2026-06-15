@@ -98,6 +98,8 @@ header p {
 nav {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Lässt Buttons am Handy umbrechen, statt rauszuzusurfen */
     gap: 20px;
     background-color: #ffffff;
     padding: 15px;
@@ -225,6 +227,7 @@ footer {
     margin-top: 60px;
     border-top: 1px solid #e8c5c8;
 }
+
 /* ==========================================================================
    7. AUTOMATISCHE DIASHOW
    ========================================================================== */
@@ -293,6 +296,7 @@ footer {
         padding: 8px 16px;
     }
 }
+
 /* ==========================================================================
    8. GALERIE FILTERS & LAYOUT
    ========================================================================== */
@@ -346,6 +350,7 @@ footer {
     border-bottom: 2px solid #b56c70;
     border-radius: 0;
 }
+
 /* ==========================================================================
    9. PRO-GALERIE DESIGN (DYNAMISCH & ÜBERSICHTLICH)
    ========================================================================== */
@@ -393,8 +398,8 @@ footer {
     box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
 }
 
-/* Neues, kompaktes Grid */
-.pro-gallery-grid {
+/* Neues, kompaktes Grid (Unterstützt auch Firebase-Container) */
+.pro-gallery-grid, #bilder-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 25px;
@@ -409,6 +414,7 @@ footer {
     box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
     transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
     border: 1px solid rgba(244, 236, 225, 0.5);
+    width: 100%;
 }
 
 /* Hover-Effekt: Karte hebt sich leicht ab */
@@ -464,20 +470,45 @@ footer {
     line-height: 1.4;
 }
 
-/* Perfekte Anpassung für mobile Handys */
-@media (max-width: 500px) {
+/* Perfekte Anpassung für mobile Handys (Schwellenwert auf 768px erhöht!) */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .nav-btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+        background-color: #fcf9f5;
+    }
+
     .filter-tab-bar {
         display: flex;
         flex-direction: column;
         width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
         border-radius: 15px;
     }
+    
     .tab-btn {
-        padding: 8px 15px;
+        padding: 10px;
         font-size: 0.9rem;
+        text-align: center;
     }
-    .pro-gallery-grid {
-        grid-template-columns: 1fr; /* Auf winzigen Bildschirmen alles untereinander */
+    
+    /* Schaltet auf ALLEN Handys sauber auf 1 kompakte Spalte um */
+    .pro-gallery-grid, #bilder-container, .gallery-grid {
+        grid-template-columns: 1fr !important;
         gap: 20px;
+    }
+
+    /* Deckelt die Bild-Karten auf Smartphones, damit sie griffig bleiben */
+    .gallery-card, .gallery-item {
+        max-width: 320px;
+        margin: 0 auto;
     }
 }

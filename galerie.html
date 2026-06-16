@@ -4,58 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Silvias Handarbeitsgalerie - Kollektion</title>
+    <title>Galerie - Silvias Kunstwelt</title>
 </head>
 <body>
 
     <header>
         <div class="header-container">
-            <div class="header-text">
-                <h1>Handgemacht mit Liebe</h1>
-                <p>Silvias kreative Häkel- & Strickwelt</p>
-            </div>
-            <div class="header-image-box">
-                <img src="wollii.png" alt="Wollkorb mit gehäkeltem Bär" class="header-img">
-            </div>
+            <h1>Meine Galerie</h1>
+            <nav style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <a href="index.html" class="nav-btn">Startseite / Über mich</a>
+                <a href="login.html" class="nav-btn">Mitglieder-Login</a>
+                <a href="admin.html" class="nav-btn">Admin-Bereich</a>
+            </nav>
         </div>
     </header>
 
-    <nav>
-        <a href="index.html" class="nav-btn">Startseite / Über mich</a>
-        <a href="galerie.html" class="nav-btn active-nav">Bildergalerie</a>
-    </nav>
-
     <main class="container">
-        
-        <div class="gallery-controls">
-            <p class="gallery-intro">Entdecke Silvias handgemachte Einzelstücke</p>
-            <div class="filter-tab-bar">
-                <button class="tab-btn active" onclick="neuerFilter('alle')">Alles ansehen</button>
-                <button class="tab-btn" onclick="neuerFilter('haekeln')">🧶 Gehäkeltes</button>
-                <button class="tab-btn" onclick="neuerFilter('stricken')">🧦 Gestricktes</button>
-            </div>
+        <div class="tabs-container" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;">
+            <button class="tab-btn active" onclick="neuerFilter('alle')">Alle Werke</button>
+            <button class="tab-btn" onclick="neuerFilter('haekeln')">Häkeln</button>
+            <button class="tab-btn" onclick="neuerFilter('stricken')">Stricken</button>
+            <button class="tab-btn" onclick="neuerFilter('malerei')">Malereien</button>
         </div>
 
-        <div class="pro-gallery-grid">
-            
-            <div id="bilder-container" style="display: contents;"></div>
-
-            
-                </div>
-            </div>
-
-        </div>
+        <div id="bilder-container" class="gallery-grid"></div>
     </main>
-
-    <footer>
-        <p>&copy; 2026 Silvias Handarbeitsgalerie</p>
-    </</footer>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
+    
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
@@ -66,11 +44,7 @@
             appId: "1:1098331655605:web:0129125b707678202addfc",
             measurementId: "G-3C3FW8JDWK"
         };
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
     </script>
-
     <script src="script.js"></script>
 </body>
 </html>

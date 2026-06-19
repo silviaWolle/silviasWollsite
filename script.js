@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==========================================
-    // UPLOAD-LOGIK
+    // UPLOAD-LOGIK (JETZT MIT FEHLER-ABSICHERUNG!)
     // ==========================================
     if (uploadForm) {
         uploadForm.addEventListener("submit", async (e) => {
@@ -139,12 +139,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             msg.textContent = "Upload läuft...";
             const path = Date.now() + "_" + file.name;
 
+            // 1. Datei in den Storage hochladen
             const { error: sErr } = await sbClient.storage.from('bilder-mama').upload(path, file);
-            if (sErr) { msg.textContent = "Fehler: " + sErr.message; return; }
+            if (sErr) { msg.textContent = "Fehler im Storage: " + sErr.message; return; }
 
+            // 2. Öffentliche URL generieren
             const { data: urlData } = sbClient.storage.from('bilder-mama').getPublicUrl(path);
-            await sbClient.from('bilder').insert([{ titel, kategorie: kat, url: urlData.publicUrl, storage_path: path, highlight: false }]);
             
+            // 3. Eintrag in die Tabelle schreiben
+            const { error: dbErr } = await sbClient.from('bilder').insert([
+                { titel, kategorie: kat, url: urlData.publicUrl, storage_path: path, highlight: false }
+            ]);
+            
+            // NEU: Wenn das Eintragen schiefgeht (z.B. weil die Spalte fehlt), fangen wir das ab!
+            if (dbErr) { 
+                msg.textContent = "Fehler beim Speichern: " + dbErr.message;
+                alert("⚠️ Datenbank-Fehler beim Hochladen!\n\nHast du im Supabase-Dashboard schon die neue Spalte 'highlight' (Typ: bool) hinzugefügt? Falls nicht, bricht der Upload genau hier ab.");
+                return; 
+            }
+
+            // Wenn alles glattging:
             msg.textContent = "Erfolgreich hochgeladen!";
             uploadForm.reset();
             if (previewBox) previewBox.style.display = "none";
@@ -164,7 +178,6 @@ window.abmelden = async function() {
     window.location.href = "login.html";
 };
 
-// Highlight-Status umschalten mit verbesserter Fehlermeldung
 window.toggleHighlight = async function(id, aktuellerStatus) {
     const { error } = await sbClient.from('bilder').update({ highlight: !aktuellerStatus }).eq('id', id);
     if (error) {
@@ -198,7 +211,7 @@ async function ladeBilder() {
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
 
-    // 1. HIGHLIGHT-BEREICH AUF DER STARTSEITE
+    // 1. HIGHLIGHT-BEREICH
     if (highlightCont) {
         const highlightBilder = data.filter(d => d.highlight === true);
         if (highlightBilder.length > 0) {
@@ -223,7 +236,7 @@ async function ladeBilder() {
         }
     }
 
-    // 2. ALLE BILDER AN IHRE JEWEILIGEN SEITEN VERTEILEN
+    // 2. BILDER VERTEILEN
     data.forEach(d => {
         if (cont) {
             const k = document.createElement("div");
@@ -252,7 +265,6 @@ async function ladeBilder() {
             if (d.kategorie === "malereien" && malereienGrid) malereienGrid.appendChild(imgBox);
         }
 
-        // JETZT MIT BILD-ANSICHT (THUMBNAIL) IN DER ADMIN-LISTE
         if (adminCont) {
             const a = document.createElement("div");
             a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px; gap: 15px;";

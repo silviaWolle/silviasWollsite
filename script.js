@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             if (dbErr) { 
                 msg.textContent = "Fehler beim Speichern: " + dbErr.message;
-                alert("⚠️ Datenbank-Fehler beim Hochladen!\n\nHast du im Supabase-Dashboard schon die neue Spalte 'highlight' (Typ: bool) hinzugefügt?");
+                alert("⚠️ Datenbank-Fehler beim Hochladen!");
                 return; 
             }
 
@@ -173,11 +173,20 @@ window.abmelden = async function() {
     window.location.href = "login.html";
 };
 
+// JETZT MIT DETEKTOR FÜR STILLE RLS-BLOCKADEN
 window.toggleHighlight = async function(id, isHighlight) {
-    const { error } = await sbClient.from('bilder').update({ highlight: !isHighlight }).eq('id', id);
+    console.log("Highlight-Klick registriert für ID:", id, "Aktueller Status:", isHighlight);
+    
+    // Wir hängen .select() an, um zu prüfen, ob Supabase die Zeile wirklich bearbeitet hat
+    const { data, error } = await sbClient.from('bilder').update({ highlight: !isHighlight }).eq('id', id).select();
+    
     if (error) {
         alert("⚠️ Fehler beim Ändern des Highlights!\n\nDetails: " + error.message);
+    } else if (!data || data.length === 0) {
+        // Falls keine Fehler kommen, aber die Daten leer sind -> RLS blockiert!
+        alert("⚠️ Supabase hat das Update blockiert!\n\nDas Bild wurde in der Datenbank nicht verändert. Das liegt daran, dass im Supabase-Dashboard noch die Erlaubnis (Policy) für 'UPDATE' auf der Tabelle 'bilder' fehlt.");
     } else {
+        console.log("Erfolgreich aktualisiert:", data);
         ladeBilder(); 
     }
 };
@@ -200,14 +209,13 @@ async function ladeBilder() {
 
     document.querySelectorAll('.db-injected-item').forEach(el => el.remove());
 
-    // JETZT MIT FEHLER-ABFANG-SYSTEM BEIM LADEN
     const { data, error } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
     
     if (error) {
         console.error("Supabase Fehler beim Laden:", error);
         if (adminCont) {
-            adminCont.innerHTML = `<div style="color: #b56c70; background: #fff5f5; padding: 15px; border: 1px solid #b56c70; border-radius: 6px; font-weight: bold;">
-                ⚠️ Supabase meldet einen Fehler beim Laden der Bilder:<br><span style="font-weight:normal; font-family:monospace;">${error.message}</span>
+            adminCont.innerHTML = `<div style="color: #b56c70; background: #fff5f5; padding: 15px; border: 1px solid #b56c70; border-radius: 6px;">
+                ⚠️ Fehler beim Laden der Bilder: ${error.message}
             </div>`;
         }
         return;
@@ -281,7 +289,7 @@ async function ladeBilder() {
             const a = document.createElement("div");
             a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px; gap: 15px;";
             
-            const isHl = d.highlight === true; // Schutz vor null/undefined Werten
+            const isHl = d.highlight === true; 
             const hlText = isHl ? " <span style='color:#b56c70; font-weight:bold;'>[🔥 Projekt-Highlight]</span>" : "";
             const btnText = isHl ? "⭐ Highlight entfernen" : "✨ Als Highlight setzen";
             const btnColor = isHl ? "#7a6f62" : "#f4ece1";
@@ -293,10 +301,10 @@ async function ladeBilder() {
                     <div><strong>${d.titel}</strong> <small>(${d.kategorie})</small>${hlText}</div>
                 </div>
                 <div style="display:flex; gap: 8px;">
-                    <button onclick="toggleHighlight('${d.id}', ${isHl})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
+                    <button onclick="window.toggleHighlight('${d.id}', ${isHl})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
                         ${btnText}
                     </button>
-                    <button onclick="loescheBild('${d.id}', '${d.storage_path}')" style="background: #b56c70; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                    <button onclick="window.loescheBild('${d.id}', '${d.storage_path}')" style="background: #b56c70; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
                         Löschen
                     </button>
                 </div>

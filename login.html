@@ -12,7 +12,6 @@
         <div class="header-container">
             <div class="header-text">
                 <h1>Mitglieder-Login</h1>
-                
             </div>
         </div>
     </header>
@@ -30,7 +29,7 @@
 
                 <div style="display: flex; flex-direction: column; gap: 5px;">
                     <label for="password" style="font-weight: 600; color: #7a6f62;">Passwort</label>
-                    <input type="password" id="password" required placeholder="Password" 
+                    <input type="password" id="password" required placeholder="Passwort" 
                            style="padding: 12px; border: 2px solid #f4ece1; border-radius: 8px; font-size: 1rem;">
                 </div>
 
@@ -41,26 +40,17 @@
                 </button>
                 
             </form>
-
         </div>
     </main>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        // firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
-            authDomain: "mamadatenbank.firebaseapp.com",
-            projectId: "mamadatenbank",
-            storageBucket: "mamadatenbank.firebasestorage.app",
-            messagingSenderId: "1098331655605",
-            appId: "1:1098331655605:web:0129125b707678202addfc",
-            measurementId: "G-3C3FW8JDWK"
-        };
-        // Firebase initialisieren
-        firebase.initializeApp(firebaseConfig);
+        // Supabase initialisieren
+        const supabase = supabase.createClient(
+          'https://mehehlgisjldlwurxynu.supabase.co',
+          'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF'
+        );
     </script>
 
     <script src="script.js"></script>

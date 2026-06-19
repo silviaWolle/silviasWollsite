@@ -94,7 +94,7 @@ async function ladeBilder() {
 // 5. LÖSCHEN
 window.loescheBild = async function(id, path) {
     if (!confirm("Wirklich löschen?")) return;
-    await sbClient.storage.from('BILDER-MAMA').remove([path]);
+    await sbClient.storage.from('bilder-mama').remove([path]);
     await sbClient.from('bilder').delete().eq('id', id);
     ladeBilder();
 };

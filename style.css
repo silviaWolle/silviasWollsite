@@ -1,97 +1,522 @@
 /* ==========================================================================
-   1. GRUNDGERÜST
+   1. GRUNDEINSTELLUNGEN & FARBEN
    ========================================================================== */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fcf9f5;
-    color: #4a3f35;
+    background-color: #fcf9f5; /* Ein warmes, gemütliches Wollweiß */
+    color: #4a3f35; /* Weicher Braun-Grau-Ton */
     line-height: 1.6;
 }
 
-.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-/* ==========================================================================
-   2. HEADER & NAVIGATION
-   ========================================================================== */
-header { background-color: #f4ece1; padding: 40px 20px; border-bottom: 3px dashed #e8c5c8; }
-.header-container { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
-header h1 { font-size: 3rem; color: #b56c70; margin-bottom: 10px; font-weight: 300; }
-
-nav {
-    display: flex; justify-content: center; align-items: center; gap: 20px;
-    background-color: #ffffff; padding: 15px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.trenner {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e8c5c8, transparent);
+    margin: 60px 0;
 }
 
 /* ==========================================================================
-   3. BILD-KARTEN (DEIN GALERIE-LAYOUT)
+   2. HEADER (KOPFBEREICH) mit Bildanpassung
    ========================================================================== */
-/* Das ist der entscheidende Block für deine Supabase-Bilder */
+header {
+    background-color: #f4ece1; /* Sanfter Sandton */
+    padding: 40px 20px;
+    border-bottom: 3px dashed #e8c5c8; /* Genähte Kante */
+}
+
+.header-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.header-text {
+    flex: 1;
+    text-align: left;
+}
+
+header h1 {
+    font-size: 3rem;
+    color: #b56c70; /* Edles Altrosa */
+    margin-bottom: 10px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+header p {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #7a6f62;
+}
+
+.header-image-box {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.header-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 220px; /* Begrenzt die Höhe, damit das Bild kompakt bleibt */
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Header-Anpassung für kleinere Bildschirme / Handys */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .header-text {
+        text-align: center;
+    }
+    .header-image-box {
+        justify-content: center;
+    }
+}
+
+/* ==========================================================================
+   3. NAVIGATION
+   ========================================================================== */
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* Lässt Buttons am Handy umbrechen, statt rauszuzusurfen */
+    gap: 20px;
+    background-color: #ffffff;
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #7a6f62;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #e8c5c8;
+    color: white;
+}
+
+/* ==========================================================================
+   4. ÜBER MICH SEKTION
+   ========================================================================== */
+.about-section {
+    padding: 40px 0;
+}
+
+.about-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(181, 108, 112, 0.05);
+}
+
+.about-img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #f4ece1;
+    flex-shrink: 0; /* Verhindert, dass das Bild gequetscht wird */
+}
+
+.about-text h2 {
+    color: #b56c70;
+    margin-bottom: 15px;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .about-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   5. ALBEN & BILDER-GALERIE
+   ========================================================================== */
+.album-section h2 {
+    font-size: 2rem;
+    color: #b56c70;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
 .gallery-item {
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease;
-    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hier zwingen wir das Bild in das Korsett */
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(181, 108, 112, 0.15);
+}
+
 .gallery-item img {
-    width: 100% !important;
-    height: 250px !important;
-    object-fit: cover !important;
-    display: block;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
 }
 
-.item-info { padding: 20px; }
-.item-info h3 { font-size: 1.2rem; color: #4a3f35; margin-bottom: 5px; }
-
-/* Grid-Layout für die Übersicht */
-#bilder-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
+.item-info {
     padding: 20px;
 }
 
-/* ==========================================================================
-   4. DIASHOW
-   ========================================================================== */
-.slideshow-container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
-    margin: 40px auto;
-    border-radius: 15px;
-    overflow: hidden;
+.item-info h3 {
+    font-size: 1.2rem;
+    color: #4a3f35;
+    margin-bottom: 5px;
 }
 
-.mySlides { display: none; width: 100%; height: 100%; }
-.mySlides img { width: 100%; height: 100%; object-fit: contain; }
-
-/* ==========================================================================
-   5. MOBILE ANPASSUNG
-   ========================================================================== */
-@media (max-width: 768px) {
-    .header-container { flex-direction: column; text-align: center; }
-    nav { flex-direction: column !important; }
-    
-    #bilder-container {
-        grid-template-columns: 1fr !important;
-    }
+.item-info p {
+    font-size: 0.9rem;
+    color: #9c8e80;
 }
 
 /* ==========================================================================
-   6. FOOTER
+   6. FOOTER (FUSSZEILE)
    ========================================================================== */
 footer {
     text-align: center;
     padding: 40px;
     background-color: #f4ece1;
     color: #7a6f62;
+    font-size: 0.9rem;
     margin-top: 60px;
+    border-top: 1px solid #e8c5c8;
+}
+
+/* ==========================================================================
+   7. AUTOMATISCHE DIASHOW
+   ========================================================================== */
+.slideshow-section {
+    max-width: 800px; /* Begrenzt die Breite der Diashow, damit sie edel aussieht */
+    margin: 40px auto 20px auto;
+    padding: 0 20px;
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Feste Höhe für ein einheitliches Bild */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f4ece1;
+}
+
+/* Versteckt die Slides standardmäßig */
+.mySlides {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Schneidet die Bilder sauber zu, ohne sie zu verzerren */
+}
+
+/* Text auf den Bildern */
+.slide-text {
+    color: #ffffff;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(74, 63, 53, 0.8); /* Weicher Braunton mit Transparenz */
+    border-radius: 20px;
+    font-family: sans-serif;
+}
+
+/* Sanfter Überblend-Effekt (Animation) */
+.fade {
+    animation-name: fadeEffect;
+    animation-duration: 1.5s;
+}
+
+@keyframes fadeEffect {
+    from { opacity: .4; } 
+    to { opacity: 1; }
+}
+
+/* Anpassung für kleine Handys */
+@media (max-width: 600px) {
+    .slideshow-container {
+        height: 250px; /* Auf Handys etwas flacher */
+    }
+    .slide-text {
+        font-size: 0.9rem;
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 16px;
+    }
+}
+
+/* ==========================================================================
+   8. GALERIE FILTERS & LAYOUT
+   ========================================================================== */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0 50px 0;
+}
+
+.filter-btn {
+    background-color: white;
+    color: #7a6f62;
+    border: 2px solid #f4ece1;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.02);
+}
+
+.filter-btn:hover {
+    background-color: #f4ece1;
+    color: #4a3f35;
+}
+
+/* Wenn der Button ausgewählt ist */
+.filter-btn.active {
+    background-color: #b56c70; /* Das edle Altrosa */
+    color: white;
+    border-color: #b56c70;
+    box-shadow: 0 4px 12px rgba(181, 108, 112, 0.2);
+}
+
+.gallery-section-block {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: #b56c70;
+    margin-bottom: 25px;
+    border-bottom: 2px dashed #f4ece1;
+    padding-bottom: 10px;
+}
+
+/* Kennzeichnung für den aktiven Navigationspunkt */
+.nav-btn.active-nav {
+    border-bottom: 2px solid #b56c70;
+    border-radius: 0;
+}
+
+/* ==========================================================================
+   9. PRO-GALERIE DESIGN (DYNAMISCH & ÜBERSICHTLICH)
+   ========================================================================== */
+.gallery-controls {
+    text-align: center;
+    margin: 40px 0 30px 0;
+}
+
+.gallery-intro {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #7a6f62;
+    margin-bottom: 20px;
+}
+
+/* Edle Tab-Bar statt klobiger Knöpfe */
+.filter-tab-bar {
+    display: inline-flex;
+    background-color: #f4ece1; /* Passt zum Header */
+    padding: 6px;
+    border-radius: 30px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #7a6f62;
+    padding: 10px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+    color: #4a3f35;
+}
+
+/* Der aktive Tab bekommt den edlen Look */
+.tab-btn.active {
+    background-color: #b56c70; /* Altrosa der Startseite */
+    color: white;
+    box-shadow: 0 4px 10px rgba(181, 108, 112, 0.25);
+}
+
+/* Neues, kompaktes Grid (Unterstützt auch Firebase-Container) */
+.pro-gallery-grid, #bilder-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+    padding-bottom: 40px;
+}
+
+/* Die einzelnen Bildkarten */
+.gallery-card {
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    border: 1px solid rgba(244, 236, 225, 0.5);
+    width: 100%;
+}
+
+/* Hover-Effekt: Karte hebt sich leicht ab */
+.gallery-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(181, 108, 112, 0.12);
+}
+
+/* Bild-Container für Zoom-Effekt */
+.card-image-wrapper {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.gallery-card:hover .card-image-wrapper img {
+    transform: scale(1.06); /* Bild zoomt ganz leicht rein beim Drüberfahren */
+}
+
+/* Textbereich unter den Bildern */
+.card-meta {
+    padding: 18px;
+    position: relative;
+}
+
+/* Kleines, dezentes Label für die Kategorie */
+.category-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b56c70;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.card-meta h3 {
+    font-size: 1.15rem;
+    color: #4a3f35;
+    margin-bottom: 6px;
+}
+
+.card-meta p {
+    font-size: 0.88rem;
+    color: #8c7e70;
+    line-height: 1.4;
+}
+
+/* Perfekte Anpassung für mobile Handys (Schwellenwert auf 768px erhöht!) */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .nav-btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+        background-color: #fcf9f5;
+    }
+
+    .filter-tab-bar {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        border-radius: 15px;
+    }
+    
+    .tab-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    
+    /* Schaltet auf ALLEN Handys sauber auf 1 kompakte Spalte um (Startseite + Galerie) */
+    .pro-gallery-grid, #bilder-container, .gallery-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    /* Deckelt die Bild-Karten und alten Items auf Smartphones, damit sie griffig bleiben */
+    .gallery-card, .gallery-item {
+        max-width: 320px !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    /* Zwingt die Bilder auf der Startseite, auf dem Handy kompakt zu bleiben */
+    .gallery-item img {
+        height: 240px !important;
+        width: 100% !important;
+        object-fit: cover !important;
+    }
 }

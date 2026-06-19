@@ -7,19 +7,31 @@ const supabase = supabase.createClient(
 document.addEventListener("DOMContentLoaded", () => {
     
     // ==========================================================================
-    // 1. LOGIN & LOGOUT (Supabase Version)
+    // 1. LOGIN & LOGOUT
     // ==========================================================================
     const loginForm = document.getElementById("login-form");
     const logoutBtn = document.getElementById("logout-btn");
+    const loginMessage = document.getElementById("login-message");
 
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
+            
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            if(loginMessage) loginMessage.textContent = "Verbinde...";
+
+            const { data, error } = await supabase.auth.signInWithPassword({ 
+                email: email, 
+                password: password 
+            });
+
             if (error) {
+                if(loginMessage) {
+                    loginMessage.style.color = "red";
+                    loginMessage.textContent = "Fehler: " + error.message;
+                }
                 alert("Login fehlgeschlagen: " + error.message);
             } else {
                 window.location.href = "admin.html";
@@ -36,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================================================
-    // 2. BATCH-UPLOAD (Supabase Version)
+    // 2. BATCH-UPLOAD
     // ==========================================================================
     const uploadForm = document.getElementById("upload-form");
     const uploadMessage = document.getElementById("upload-message");
@@ -49,8 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (dateien.length === 0) return alert("Wähle Bilder aus!");
 
-            uploadMessage.style.color = "orange";
-            uploadMessage.textContent = `Lade ${dateien.length} Bilder hoch...`;
+            if(uploadMessage) {
+                uploadMessage.style.color = "orange";
+                uploadMessage.textContent = `Lade ${dateien.length} Bilder hoch...`;
+            }
 
             const titelBasis = document.getElementById("bild-titel").value;
             const kategorie = document.getElementById("bild-kategorie").value;
@@ -74,9 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     }]);
                 }
             }
-            uploadMessage.style.color = "green";
-            uploadMessage.textContent = "Upload abgeschlossen!";
+            if(uploadMessage) {
+                uploadMessage.style.color = "green";
+                uploadMessage.textContent = "Upload abgeschlossen!";
+            }
             uploadForm.reset();
+            location.reload();
         });
     }
 
@@ -89,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const { data: bilder } = await supabase.from('bilder').select('*').order('created_at', { ascending: false });
 
-        if (firebaseContainer) {
+        if (firebaseContainer && bilder) {
             firebaseContainer.innerHTML = bilder.map(d => `
                 <div class="gallery-card ${d.kategorie}">
                     <div class="card-image-wrapper"><img src="${d.url}" alt="${d.titel}"></div>
@@ -97,9 +114,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>`).join('');
         }
 
-        if (adminContainer) {
+        if (adminContainer && bilder) {
             adminContainer.innerHTML = bilder.map(d => `
-                <div style="display:flex; padding:10px; border:1px solid #ddd; margin-bottom:5px;">
+                <div style="display:flex; padding:10px; border:1px solid #ddd; margin-bottom:5px; align-items:center;">
                     <img src="${d.url}" style="width:50px; height:50px; object-fit:cover;">
                     <span style="flex-grow:1; padding-left:10px;">${d.titel}</span>
                     <button onclick="loescheBild('${d.id}', '${d.storage_path}')">Löschen</button>

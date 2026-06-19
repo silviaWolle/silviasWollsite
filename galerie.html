@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link class="stylesheet" href="style.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>Silvias Handarbeitsgalerie - Kollektion</title>
@@ -23,7 +24,9 @@
 
     <nav>
         <a href="index.html" class="nav-btn">Startseite / Über mich</a>
-        <a href="galerie.html" class="nav-btn active-nav">Bildergalerie</a>
+        <a href="galerie.html" class="nav-btn">Bildergalerie</a>
+        <a href="galerie.html?filter=malereien" class="nav-btn">🎨 Meine Malereien</a>
+        <a href="login.html" class="nav-btn">Mitglieder-Login</a>
     </nav>
 
     <main class="container">
@@ -31,15 +34,16 @@
         <div class="gallery-controls">
             <p class="gallery-intro">Entdecke Silvias handgemachte Einzelstücke</p>
             <div class="filter-tab-bar">
-                <button class="tab-btn active" onclick="neuerFilter('alle')">Alles ansehen</button>
-                <button class="tab-btn" onclick="neuerFilter('haekeln')">🧶 Gehäkeltes</button>
-                <button class="tab-btn" onclick="neuerFilter('stricken')">🧦 Gestricktes</button>
+                <button class="tab-btn active" onclick="neuerFilter('alle', this)">Alles ansehen</button>
+                <button class="tab-btn" onclick="neuerFilter('haekeln', this)">🧶 Gehäkeltes</button>
+                <button class="tab-btn" onclick="neuerFilter('stricken', this)">🧦 Gestricktes</button>
+                <button class="tab-btn" onclick="neuerFilter('malereien', this)">🎨 Meine Malereien</button>
             </div>
         </div>
 
         <div class="pro-gallery-grid">
             <div id="bilder-container" style="display: contents;">
-                </div>
+            </div>
         </div>
     </main>
 

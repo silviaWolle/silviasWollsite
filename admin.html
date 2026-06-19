@@ -59,9 +59,12 @@
                 <h1>Admin-Schaltzentrale</h1>
                 <p>Hier kannst du die Galerie verwalten</p>
             </div>
-            <nav style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+            <nav style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; align-items: center;">
                 <a href="index.html" class="nav-btn">Zur Startseite</a>
                 <a href="galerie.html" class="nav-btn">Zur Galerie</a>
+                <button onclick="abmelden()" class="nav-btn" style="background: #b56c70; color: white; border: none; cursor: pointer; padding: 10px 20px;">
+                    Abmelden 🚪
+                </button>
             </nav>
         </div>
     </header>
@@ -84,6 +87,7 @@
                     <select id="bild-kategorie" style="padding: 12px; border: 2px solid #f4ece1; border-radius: 8px; background: white;">
                         <option value="haekeln">Häkeln</option>
                         <option value="stricken">Stricken</option>
+                        <option value="malereien">🎨 Malereien</option>
                     </select>
                 </div>
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. GRUNDEINSTELLUNGEN & FARBEN
+   1. GRUNDGERÜST
    ========================================================================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -26,60 +26,72 @@ nav {
 }
 
 /* ==========================================================================
-   3. BILDER-GALERIE & SUPABASE-KARTEN
+   3. BILD-KARTEN (DEIN GALERIE-LAYOUT)
    ========================================================================== */
-/* Das ist der wichtigste Block für die neuen Bilder! */
-.card-image-wrapper {
-    width: 100%;
-    height: 240px;
+/* Das ist der entscheidende Block für deine Supabase-Bilder */
+.gallery-item {
+    background-color: white;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+    width: 100%;
 }
 
-.card-image-wrapper img {
+/* Hier zwingen wir das Bild in das Korsett */
+.gallery-item img {
     width: 100% !important;
-    height: 100% !important;
+    height: 250px !important;
     object-fit: cover !important;
     display: block;
-    transition: transform 0.5s ease;
 }
 
-/* Karten-Layout */
-.gallery-card {
-    background-color: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(74, 63, 53, 0.04);
-    border: 1px solid rgba(244, 236, 225, 0.5);
-    width: 100%;
-    transition: transform 0.3s ease;
-}
+.item-info { padding: 20px; }
+.item-info h3 { font-size: 1.2rem; color: #4a3f35; margin-bottom: 5px; }
 
-.gallery-card:hover { transform: translateY(-6px); }
-
-.card-meta { padding: 18px; }
-
-/* Das Grid */
-.pro-gallery-grid, #bilder-container {
+/* Grid-Layout für die Übersicht */
+#bilder-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 25px;
-    padding-bottom: 40px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px;
 }
 
 /* ==========================================================================
-   4. MOBILE ANPASSUNG (Handy-Optimierung)
+   4. DIASHOW
+   ========================================================================== */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    margin: 40px auto;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.mySlides { display: none; width: 100%; height: 100%; }
+.mySlides img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ==========================================================================
+   5. MOBILE ANPASSUNG
    ========================================================================== */
 @media (max-width: 768px) {
     .header-container { flex-direction: column; text-align: center; }
+    nav { flex-direction: column !important; }
     
-    nav { flex-direction: column !important; gap: 10px !important; }
-    
-    .pro-gallery-grid, #bilder-container {
+    #bilder-container {
         grid-template-columns: 1fr !important;
     }
-    
-    .gallery-card {
-        max-width: 320px !important;
-        margin: 0 auto !important;
-    }
+}
+
+/* ==========================================================================
+   6. FOOTER
+   ========================================================================== */
+footer {
+    text-align: center;
+    padding: 40px;
+    background-color: #f4ece1;
+    color: #7a6f62;
+    margin-top: 60px;
 }

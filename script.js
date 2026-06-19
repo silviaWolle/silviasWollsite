@@ -48,10 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
             msg.textContent = "Upload läuft...";
             const path = Date.now() + "_" + file.name;
 
-            const { error: sErr } = await sbClient.storage.from('BILDER-MAMA').upload(path, file);
+            const { error: sErr } = await sbClient.storage.from('bilder-mama').upload(path, file);
             if (sErr) { msg.textContent = "Fehler: " + sErr.message; return; }
 
-            const { data: urlData } = sbClient.storage.from('BILDER-MAMA').getPublicUrl(path);
+            const { data: urlData } = sbClient.storage.from('bilder-mama').getPublicUrl(path);
             await sbClient.from('bilder').insert([{ titel, kategorie: kat, url: urlData.publicUrl, storage_path: path }]);
             
             msg.textContent = "Erfolgreich hochgeladen!";

@@ -164,13 +164,13 @@ window.abmelden = async function() {
     window.location.href = "login.html";
 };
 
-// NEU: Highlight-Status in der Datenbank umschalten
+// Highlight-Status umschalten mit verbesserter Fehlermeldung
 window.toggleHighlight = async function(id, aktuellerStatus) {
     const { error } = await sbClient.from('bilder').update({ highlight: !aktuellerStatus }).eq('id', id);
     if (error) {
-        alert("Fehler beim Ändern des Highlight-Status: " + error.message);
+        alert("⚠️ Fehler beim Ändern des Highlights!\n\nHast du im Supabase-Dashboard schon die Spalte 'highlight' (Typ: bool) angelegt?\n\nDetails: " + error.message);
     } else {
-        ladeBilder(); // Liste neu laden
+        ladeBilder(); 
     }
 };
 
@@ -182,16 +182,14 @@ window.loescheBild = async function(id, path) {
 };
 
 async function ladeBilder() {
-    const cont = document.getElementById("bilder-container"); // Galerie-Seite
-    const adminCont = document.getElementById("admin-bilder-liste"); // Admin-Seite
-    const highlightCont = document.getElementById("highlight-container"); // Startseite Highlight
+    const cont = document.getElementById("bilder-container"); 
+    const adminCont = document.getElementById("admin-bilder-liste"); 
+    const highlightCont = document.getElementById("highlight-container"); 
 
-    // Startseiten-Grids für dynamische Album-Erweiterung
     const haekelnGrid = document.querySelector("#haekeln .gallery-grid");
     const strickenGrid = document.querySelector("#stricken .gallery-grid");
     const malereienGrid = document.querySelector("#malereien .gallery-grid");
 
-    // Alte hochgeladene Datenbank-Bilder vor dem Neu-Rendern entfernen, um Dopplungen zu vermeiden
     document.querySelectorAll('.db-injected-item').forEach(el => el.remove());
 
     const { data } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
@@ -200,7 +198,7 @@ async function ladeBilder() {
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
 
-    // 1. HIGHLIGHT-BEREICH AUF DER STARTSEITE ANSTEUERN
+    // 1. HIGHLIGHT-BEREICH AUF DER STARTSEITE
     if (highlightCont) {
         const highlightBilder = data.filter(d => d.highlight === true);
         if (highlightBilder.length > 0) {
@@ -227,7 +225,6 @@ async function ladeBilder() {
 
     // 2. ALLE BILDER AN IHRE JEWEILIGEN SEITEN VERTEILEN
     data.forEach(d => {
-        // Für die reine Bildergalerie-Seite
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-item " + d.kategorie; 
@@ -240,7 +237,6 @@ async function ladeBilder() {
             cont.appendChild(k);
         }
 
-        // NEU: Für die Startseite (Bilder automatisch hinten an die Alben anhängen)
         if (haekelnGrid || strickenGrid || malereienGrid) {
             const imgBox = document.createElement("div");
             imgBox.className = "gallery-item db-injected-item";
@@ -256,10 +252,10 @@ async function ladeBilder() {
             if (d.kategorie === "malereien" && malereienGrid) malereienGrid.appendChild(imgBox);
         }
 
-        // Für die Admin-Verwaltungsliste (Mit neuem Highlight-Button)
+        // JETZT MIT BILD-ANSICHT (THUMBNAIL) IN DER ADMIN-LISTE
         if (adminCont) {
             const a = document.createElement("div");
-            a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px;";
+            a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px; gap: 15px;";
             
             const hlText = d.highlight ? " <span style='color:#b56c70; font-weight:bold;'>[🔥 Projekt-Highlight]</span>" : "";
             const btnText = d.highlight ? "⭐ Highlight entfernen" : "✨ Als Highlight setzen";
@@ -267,7 +263,10 @@ async function ladeBilder() {
             const btnTextColor = d.highlight ? "white" : "#7a6f62";
 
             a.innerHTML = `
-                <div><strong>${d.titel}</strong> <small>(${d.kategorie})</small>${hlText}</div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <img src="${d.url}" alt="${d.titel}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; border:1px solid #f4ece1;">
+                    <div><strong>${d.titel}</strong> <small>(${d.kategorie})</small>${hlText}</div>
+                </div>
                 <div style="display:flex; gap: 8px;">
                     <button onclick="toggleHighlight('${d.id}', ${d.highlight})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
                         ${btnText}
@@ -281,7 +280,6 @@ async function ladeBilder() {
         }
     });
 
-    // Filter-Trigger für die Galerie-Seite
     if (cont) {
         const urlParams = new URLSearchParams(window.location.search);
         const filterParam = urlParams.get('filter');
@@ -311,7 +309,7 @@ window.neuerFilter = function(kat, element) {
     }
 
     document.querySelectorAll(".gallery-item").forEach(k => {
-        if (k.classList.contains('db-injected-item')) return; // Startseiten-Inhalte ignorieren
+        if (k.classList.contains('db-injected-item')) return; 
         if (kat === "alle") {
             k.style.display = k.classList.contains("malereien") ? "none" : "";
         } else {

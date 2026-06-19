@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script defer src="script.js"></script>
     <link rel="stylesheet" href="style.css">
     <title>Silvias Handarbeits Website</title>
 </head>
@@ -39,38 +42,127 @@
                     <p>
                         Schon seit vielen Jahren begleiten mich Nadeln und Wolle durchs Leben. 
                         Ob gemütliche Socken für den Winter oder 
-                        elegante und einzigartige Sonderanfertigungen – für mich bedeutet Häkeln, Malen und Stricken pure Entspannung und Kreativität.
-                        <strong>DIE SEITE IST NOCH IM AUFBAU</strong>
+                        elegante und einzigartige Sonderanfertigungen – für mich bedeutet Häkeln und Stricken pure Entspannung und Kreativität.
                     </p>
                     <p>
                         Auf dieser Seite sammle ich meine liebsten Stücke, um meine Leidenschaft mit dir zu teilen. 
-                        Schau dich gerne in meine Galerie um!
+                        Schau dich gerne in meinen Alben um!
                     </p>
                 </div>
             </div>
-            
             <section class="slideshow-section">
                 <div class="slideshow-container">
+
                     <div class="mySlides fade">
                         <img src="fotos/zwerg2.jpg" alt="schau gerne in meine Galerie">
                         <div class="slide-text">schau gerne in meine Galerie</div>
                     </div>
+
+                    <div class="mySlides fade">
+                        <img src="fotos/27.jpeg" alt="schau gerne in meine Galerie">
+                        <div class="slide-text">schau gerne in meine Galerie</div>
+                    </div>
+
+                    <div class="mySlides fade">
+                        <img src="fotos/35.jpeg" alt="schau gerne in meine Galerie">
+                        <div class="slide-text">schau gerne in meine Galerie</div>
+                    </div>
+
                 </div>
             </section>
         </section>
 
         <div id="highlight-container" style="display: none; margin-top: 40px;"></div>
+
         <hr class="trenner">
-        </main>
+
+        <section id="haekeln" class="album-section">
+            <h2>edeles Gehäkeltes</h2>
+            <div class="gallery-grid">
+                
+                <div class="gallery-item">
+                    <img src="fotos/mäuse.jpg" alt="Häkelarbeit">
+                    <div class="item-info">
+                        <h3>Liebevolles Geschenk</h3>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="fotos/zwerg.jpg" alt="Häkelarbeit">
+                    <div class="item-info1">
+                        <h3>Süße Wichtel</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="fotos/katze.jpg" alt="niedliches gehäkeltes Kätzchen">
+                    <div class="item-info2">
+                        <h3>Süße Stift halte Katze</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="fotos/silvester.jpg" alt="Glücksbringer">
+                    <div class="item-info3">
+                        <h3>Kleines Glück</h3>
+                        <p>für Silvester oder für Freunde/Familie</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="fotos/ostern.jpg" alt="oster Geschenke">
+                    <div class="item-info4">
+                        <h3>niedliche oster Geschenke</h3>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="fotos/burger.jpg" alt="Essen">
+                    <div class="item-info5">
+                        <h3>leckerer Burger</h3>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <hr class="trenner">
+
+        <section id="stricken" class="album-section">
+            <h2>kuschliges Gestricktes</h2>
+            <div class="gallery-grid">
+                
+                <div class="gallery-item">
+                    <img src="fotos/socken 1.jpg" alt="Strickarbeit">
+                    <div class="item-info">
+                        <h3>Warmer Wintersocken</h3>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="fotos/socken2.jpg" alt="Strickarbeit">
+                    <div class="item-info">
+                        <h3>Kuschelige Wollsocken</h3>
+                        <p>Perfekt für kalte Tage</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
 
     <footer>
         <p>&copy; 2026 Erstellt mit Liebe für Mama</p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    
-    
-    <script src="script.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
+            authDomain: "mamadatenbank.firebaseapp.com",
+            projectId: "mamadatenbank",
+            storageBucket: "mamadatenbank.firebasestorage.app",
+            messagingSenderId: "1098331655605",
+            appId: "1:1098331655605:web:0129125b707678202addfc",
+            measurementId: "G-3C3FW8JDWK"
+        };
+    </script>
+
 </body>
 </html>

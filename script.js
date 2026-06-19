@@ -1,13 +1,9 @@
-// ==========================================================================
 // SUPABASE INITIALISIERUNG
-// ==========================================================================
 const supabaseUrl = 'https://mehehlgisjldlwurxynu.supabase.co';
 const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
-
 const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", () => {
-    
     // 1. DIASHOW
     let slideIndex = 0;
     const slides = document.getElementsByClassName("mySlides");
@@ -21,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     showSlides();
 
-    // 2. LOGIN
+    // 2. LOGIN-LOGIK
     const loginForm = document.getElementById("login-form"); 
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
@@ -35,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 3. UPLOAD-LOGIK (WICHTIG: Das hier fehlte!)
+    // 3. UPLOAD-LOGIK
     const uploadForm = document.getElementById("upload-form");
     if (uploadForm) {
         uploadForm.addEventListener("submit", async (e) => {
@@ -59,11 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
             ladeBilder();
         });
     }
-
     ladeBilder();
 });
 
-// 4. LADEN & FILTERN
+// 4. LADEN & ANZEIGEN
 async function ladeBilder() {
     const cont = document.getElementById("bilder-container");
     const adminCont = document.getElementById("admin-bilder-liste"); 
@@ -79,7 +74,7 @@ async function ladeBilder() {
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-card " + d.kategorie;
-            k.innerHTML = `<img src="${d.url}" alt="${d.titel}"><h3>${d.titel}</h3>`;
+            k.innerHTML = `<img src="${d.url}" class="gallery-image" alt="${d.titel}"><h3>${d.titel}</h3>`;
             cont.appendChild(k);
         }
         if (adminCont) {
@@ -91,7 +86,7 @@ async function ladeBilder() {
     });
 }
 
-// 5. LÖSCHEN
+// 5. LÖSCHEN & FILTER
 window.loescheBild = async function(id, path) {
     if (!confirm("Wirklich löschen?")) return;
     await sbClient.storage.from('bilder-mama').remove([path]);

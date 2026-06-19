@@ -173,20 +173,14 @@ window.abmelden = async function() {
     window.location.href = "login.html";
 };
 
-// JETZT MIT DETEKTOR FÜR STILLE RLS-BLOCKADEN
 window.toggleHighlight = async function(id, isHighlight) {
-    console.log("Highlight-Klick registriert für ID:", id, "Aktueller Status:", isHighlight);
-    
-    // Wir hängen .select() an, um zu prüfen, ob Supabase die Zeile wirklich bearbeitet hat
     const { data, error } = await sbClient.from('bilder').update({ highlight: !isHighlight }).eq('id', id).select();
     
     if (error) {
         alert("⚠️ Fehler beim Ändern des Highlights!\n\nDetails: " + error.message);
     } else if (!data || data.length === 0) {
-        // Falls keine Fehler kommen, aber die Daten leer sind -> RLS blockiert!
-        alert("⚠️ Supabase hat das Update blockiert!\n\nDas Bild wurde in der Datenbank nicht verändert. Das liegt daran, dass im Supabase-Dashboard noch die Erlaubnis (Policy) für 'UPDATE' auf der Tabelle 'bilder' fehlt.");
+        alert("⚠️ Supabase hat das Update blockiert! RLS-Fehler.");
     } else {
-        console.log("Erfolgreich aktualisiert:", data);
         ladeBilder(); 
     }
 };
@@ -213,11 +207,6 @@ async function ladeBilder() {
     
     if (error) {
         console.error("Supabase Fehler beim Laden:", error);
-        if (adminCont) {
-            adminCont.innerHTML = `<div style="color: #b56c70; background: #fff5f5; padding: 15px; border: 1px solid #b56c70; border-radius: 6px;">
-                ⚠️ Fehler beim Laden der Bilder: ${error.message}
-            </div>`;
-        }
         return;
     }
 
@@ -231,20 +220,20 @@ async function ladeBilder() {
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
 
-    // 1. HIGHLIGHT-BEREICH
+    // 1. NEUER, GEZÄHMTER HIGHLIGHT-BEREICH (ZENTRIERT & GEBLOCKT)
     if (highlightCont) {
         const highlightBilder = data.filter(d => d.highlight === true);
         if (highlightBilder.length > 0) {
             highlightCont.style.display = "block";
             highlightCont.innerHTML = `
-                <section class="album-section" style="background: #fdfbf7; padding: 25px; border: 2px dashed #b56c70; border-radius: 12px; margin-bottom: 40px;">
-                    <h2 style="color: #b56c70; text-align: center; margin-bottom: 20px;">✨ Aktuell mein neues Projekt</h2>
-                    <div class="gallery-grid">
+                <section class="album-section" style="background: #fdfbf7; padding: 25px; border: 2px dashed #b56c70; border-radius: 12px; margin-bottom: 40px; display: flex; flex-direction: column; align-items: center;">
+                    <h2 style="color: #b56c70; text-align: center; margin-bottom: 25px;">✨ Aktuell mein neues Projekt</h2>
+                    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; width: 100%;">
                         ${highlightBilder.map(b => `
-                            <div class="gallery-item">
-                                <img src="${b.url}" alt="${b.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
-                                <div class="item-info">
-                                    <h3>${b.titel}</h3>
+                            <div class="gallery-item" style="max-width: 380px; width: 100%; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); box-sizing: border-box;">
+                                <img src="${b.url}" alt="${b.titel}" style="width:100%; height:380px; object-fit:cover; border-radius:6px; display:block;">
+                                <div class="item-info" style="text-align: center; margin-top: 12px;">
+                                    <h3 style="margin: 0; color: #7a6f62; font-size: 1.3rem;">${b.titel}</h3>
                                 </div>
                             </div>
                         `).join('')}

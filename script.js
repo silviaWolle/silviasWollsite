@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ladeBilder();
 });
 
-// 4. LADEN & ANZEIGEN (Mit korrekter HTML-Struktur für das CSS)
+// 4. LADEN & ANZEIGEN (Verwendet deine Original-Klassen)
 async function ladeBilder() {
     const cont = document.getElementById("bilder-container");
     const adminCont = document.getElementById("admin-bilder-liste"); 
@@ -74,13 +74,10 @@ async function ladeBilder() {
     data.forEach(d => {
         if (cont) {
             const k = document.createElement("div");
-            k.className = "gallery-card " + d.kategorie;
-            // Der Wrapper 'card-image-wrapper' sorgt dafür, dass dein CSS die Bildgröße erzwingt
+            k.className = "gallery-item " + d.kategorie; // Nutzt deine Original-Klasse
             k.innerHTML = `
-                <div class="card-image-wrapper">
-                    <img src="${d.url}" alt="${d.titel}">
-                </div>
-                <div class="card-meta">
+                <img src="${d.url}" alt="${d.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
+                <div class="item-info">
                     <h3>${d.titel}</h3>
                 </div>
             `;
@@ -104,7 +101,7 @@ window.loescheBild = async function(id, path) {
 };
 
 window.neuerFilter = function(kat) {
-    document.querySelectorAll(".gallery-card").forEach(k => {
+    document.querySelectorAll(".gallery-item").forEach(k => {
         k.style.display = (kat === "alle" || k.classList.contains(kat)) ? "" : "none";
     });
 };

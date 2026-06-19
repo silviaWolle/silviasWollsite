@@ -4,7 +4,7 @@ const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
 const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. DIASHOW
+    // 1. DIASHOW (Dein bestehender Code)
     let slideIndex = 0;
     const slides = document.getElementsByClassName("mySlides");
     function showSlides() {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ladeBilder();
 });
 
-// 4. LADEN & ANZEIGEN
+// 4. LADEN & ANZEIGEN (Mit korrekten CSS-Wrappern)
 async function ladeBilder() {
     const cont = document.getElementById("bilder-container");
     const adminCont = document.getElementById("admin-bilder-liste"); 
@@ -74,7 +74,15 @@ async function ladeBilder() {
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-card " + d.kategorie;
-            k.innerHTML = `<img src="${d.url}" class="gallery-image" alt="${d.titel}"><h3>${d.titel}</h3>`;
+            // Hier nutzen wir deine vorhandene Klasse 'card-image-wrapper'
+            k.innerHTML = `
+                <div class="card-image-wrapper">
+                    <img src="${d.url}" alt="${d.titel}">
+                </div>
+                <div class="card-meta">
+                    <h3>${d.titel}</h3>
+                </div>
+            `;
             cont.appendChild(k);
         }
         if (adminCont) {

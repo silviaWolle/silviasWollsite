@@ -1,13 +1,15 @@
 // ==========================================================================
-// SUPABASE INITIALISIERUNG
+// SUPABASE SICHERE INITIALISIERUNG
 // ==========================================================================
 const supabaseUrl = 'https://mehehlgisjldlwurxynu.supabase.co';
 const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
 
-// Sicherer Client-Aufruf
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// Wir nutzen window.supabase, um den Konflikt mit dem CDN zu vermeiden
+window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = window.supabaseClient;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // ... dein restlicher Code bleibt hier unverändert ...
     
     // 1. DIASHOW (Jetzt läuft sie auch, wenn das Skript sauber startet)
     let slideIndex = 0;

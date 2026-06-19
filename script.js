@@ -1,17 +1,15 @@
 // ==========================================================================
-// SUPABASE SICHERE INITIALISIERUNG
+// SUPABASE KONFIGURATION (Keine Neudeklaration!)
 // ==========================================================================
 const supabaseUrl = 'https://mehehlgisjldlwurxynu.supabase.co';
 const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
 
-// Wir nutzen window.supabase, um den Konflikt mit dem CDN zu vermeiden
-window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-const supabase = window.supabaseClient;
+// Wir verwenden die bereits vom CDN geladene supabase-Variable
+const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", () => {
-    // ... dein restlicher Code bleibt hier unverändert ...
     
-    // 1. DIASHOW (Jetzt läuft sie auch, wenn das Skript sauber startet)
+    // 1. DIASHOW
     let slideIndex = 0;
     const slides = document.getElementsByClassName("mySlides");
     
@@ -36,13 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById("password").value;
             const msg = document.getElementById("login-message");
 
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            const { error } = await sbClient.auth.signInWithPassword({ email, password });
             if (error) {
                 msg.style.color = "#b56c70";
                 msg.textContent = "Fehler: " + error.message;
             } else {
-                msg.style.color = "green";
-                msg.textContent = "Anmeldung erfolgreich!";
+                msg.textContent = "Erfolgreich! Weiterleitung...";
                 setTimeout(() => { window.location.href = "admin.html"; }, 1000);
             }
         });
@@ -57,7 +54,7 @@ async function ladeBilder() {
     const adminCont = document.getElementById("admin-bilder-liste"); 
     if (!cont && !adminCont) return;
 
-    const { data } = await supabase.from('bilder').select('*').order('created_at', { ascending: false });
+    const { data } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
     if (!data) return;
 
     if (cont) cont.innerHTML = "";
@@ -82,8 +79,8 @@ async function ladeBilder() {
 // 4. LÖSCHEN
 window.loescheBild = async function(id, path) {
     if (!confirm("Wirklich löschen?")) return;
-    await supabase.storage.from('BILDER-MAMA').remove([path]);
-    await supabase.from('bilder').delete().eq('id', id);
+    await sbClient.storage.from('BILDER-MAMA').remove([path]);
+    await sbClient.from('bilder').delete().eq('id', id);
     ladeBilder();
 };
 

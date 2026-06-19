@@ -4,7 +4,8 @@ const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
 const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. DIASHOW (Dein bestehender Code)
+    
+    // 1. DIASHOW
     let slideIndex = 0;
     const slides = document.getElementsByClassName("mySlides");
     function showSlides() {
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ladeBilder();
 });
 
-// 4. LADEN & ANZEIGEN (Mit korrekten CSS-Wrappern)
+// 4. LADEN & ANZEIGEN (Mit korrekter HTML-Struktur für das CSS)
 async function ladeBilder() {
     const cont = document.getElementById("bilder-container");
     const adminCont = document.getElementById("admin-bilder-liste"); 
@@ -74,7 +75,7 @@ async function ladeBilder() {
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-card " + d.kategorie;
-            // Hier nutzen wir deine vorhandene Klasse 'card-image-wrapper'
+            // Der Wrapper 'card-image-wrapper' sorgt dafür, dass dein CSS die Bildgröße erzwingt
             k.innerHTML = `
                 <div class="card-image-wrapper">
                     <img src="${d.url}" alt="${d.titel}">

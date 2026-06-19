@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==========================================
-    // UPLOAD-LOGIK (JETZT MIT FEHLER-ABSICHERUNG!)
+    // UPLOAD-LOGIK
     // ==========================================
     if (uploadForm) {
         uploadForm.addEventListener("submit", async (e) => {
@@ -139,26 +139,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             msg.textContent = "Upload läuft...";
             const path = Date.now() + "_" + file.name;
 
-            // 1. Datei in den Storage hochladen
             const { error: sErr } = await sbClient.storage.from('bilder-mama').upload(path, file);
             if (sErr) { msg.textContent = "Fehler im Storage: " + sErr.message; return; }
 
-            // 2. Öffentliche URL generieren
             const { data: urlData } = sbClient.storage.from('bilder-mama').getPublicUrl(path);
             
-            // 3. Eintrag in die Tabelle schreiben
             const { error: dbErr } = await sbClient.from('bilder').insert([
                 { titel, kategorie: kat, url: urlData.publicUrl, storage_path: path, highlight: false }
             ]);
             
-            // NEU: Wenn das Eintragen schiefgeht (z.B. weil die Spalte fehlt), fangen wir das ab!
             if (dbErr) { 
                 msg.textContent = "Fehler beim Speichern: " + dbErr.message;
-                alert("⚠️ Datenbank-Fehler beim Hochladen!\n\nHast du im Supabase-Dashboard schon die neue Spalte 'highlight' (Typ: bool) hinzugefügt? Falls nicht, bricht der Upload genau hier ab.");
+                alert("⚠️ Datenbank-Fehler beim Hochladen!\n\nHast du im Supabase-Dashboard schon die neue Spalte 'highlight' (Typ: bool) hinzugefügt?");
                 return; 
             }
 
-            // Wenn alles glattging:
             msg.textContent = "Erfolgreich hochgeladen!";
             uploadForm.reset();
             if (previewBox) previewBox.style.display = "none";
@@ -178,10 +173,10 @@ window.abmelden = async function() {
     window.location.href = "login.html";
 };
 
-window.toggleHighlight = async function(id, aktuellerStatus) {
-    const { error } = await sbClient.from('bilder').update({ highlight: !aktuellerStatus }).eq('id', id);
+window.toggleHighlight = async function(id, isHighlight) {
+    const { error } = await sbClient.from('bilder').update({ highlight: !isHighlight }).eq('id', id);
     if (error) {
-        alert("⚠️ Fehler beim Ändern des Highlights!\n\nHast du im Supabase-Dashboard schon die Spalte 'highlight' (Typ: bool) angelegt?\n\nDetails: " + error.message);
+        alert("⚠️ Fehler beim Ändern des Highlights!\n\nDetails: " + error.message);
     } else {
         ladeBilder(); 
     }
@@ -205,8 +200,25 @@ async function ladeBilder() {
 
     document.querySelectorAll('.db-injected-item').forEach(el => el.remove());
 
-    const { data } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
-    if (!data) return;
+    // JETZT MIT FEHLER-ABFANG-SYSTEM BEIM LADEN
+    const { data, error } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
+    
+    if (error) {
+        console.error("Supabase Fehler beim Laden:", error);
+        if (adminCont) {
+            adminCont.innerHTML = `<div style="color: #b56c70; background: #fff5f5; padding: 15px; border: 1px solid #b56c70; border-radius: 6px; font-weight: bold;">
+                ⚠️ Supabase meldet einen Fehler beim Laden der Bilder:<br><span style="font-weight:normal; font-family:monospace;">${error.message}</span>
+            </div>`;
+        }
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        if (adminCont) {
+            adminCont.innerHTML = `<div style="color: #7a6f62; padding: 15px; text-align: center;">Es wurden noch keine Bilder in der Datenbank gefunden.</div>`;
+        }
+        return;
+    }
 
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
@@ -269,10 +281,11 @@ async function ladeBilder() {
             const a = document.createElement("div");
             a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px; gap: 15px;";
             
-            const hlText = d.highlight ? " <span style='color:#b56c70; font-weight:bold;'>[🔥 Projekt-Highlight]</span>" : "";
-            const btnText = d.highlight ? "⭐ Highlight entfernen" : "✨ Als Highlight setzen";
-            const btnColor = d.highlight ? "#7a6f62" : "#f4ece1";
-            const btnTextColor = d.highlight ? "white" : "#7a6f62";
+            const isHl = d.highlight === true; // Schutz vor null/undefined Werten
+            const hlText = isHl ? " <span style='color:#b56c70; font-weight:bold;'>[🔥 Projekt-Highlight]</span>" : "";
+            const btnText = isHl ? "⭐ Highlight entfernen" : "✨ Als Highlight setzen";
+            const btnColor = isHl ? "#7a6f62" : "#f4ece1";
+            const btnTextColor = isHl ? "white" : "#7a6f62";
 
             a.innerHTML = `
                 <div style="display:flex; align-items:center; gap:15px;">
@@ -280,7 +293,7 @@ async function ladeBilder() {
                     <div><strong>${d.titel}</strong> <small>(${d.kategorie})</small>${hlText}</div>
                 </div>
                 <div style="display:flex; gap: 8px;">
-                    <button onclick="toggleHighlight('${d.id}', ${d.highlight})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
+                    <button onclick="toggleHighlight('${d.id}', ${isHl})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
                         ${btnText}
                     </button>
                     <button onclick="loescheBild('${d.id}', '${d.storage_path}')" style="background: #b56c70; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">

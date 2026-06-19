@@ -519,4 +519,17 @@ footer {
         width: 100% !important;
         object-fit: cover !important;
     }
+   .gallery-image {
+    width: 100%;       /* Nutzt die volle Breite der Karte */
+    height: auto;      /* Behält das Seitenverhältnis bei */
+    display: block;    /* Entfernt Abstände unter dem Bild */
+    border-radius: 4px;
+}
+
+.gallery-card {
+    width: 300px;      /* Oder deine gewünschte Kartenbreite */
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
 }

@@ -1,10 +1,9 @@
 // ==========================================================================
-// SUPABASE KONFIGURATION (Keine Neudeklaration!)
+// SUPABASE INITIALISIERUNG
 // ==========================================================================
 const supabaseUrl = 'https://mehehlgisjldlwurxynu.supabase.co';
 const supabaseKey = 'sb_publishable_ZMAXw-RG6-JIhjNPZgZKUg_JqMaLeyF';
 
-// Wir verwenden die bereits vom CDN geladene supabase-Variable
 const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,12 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // 1. DIASHOW
     let slideIndex = 0;
     const slides = document.getElementsByClassName("mySlides");
-    
     function showSlides() {
         if (slides.length === 0) return; 
-        for (let i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";  
-        }
+        for (let i = 0; i < slides.length; i++) { slides[i].style.display = "none"; }
         slideIndex++;
         if (slideIndex > slides.length) { slideIndex = 1; }   
         slides[slideIndex - 1].style.display = "block";  
@@ -25,30 +21,49 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     showSlides();
 
-    // 2. LOGIN-LOGIK
+    // 2. LOGIN
     const loginForm = document.getElementById("login-form"); 
     if (loginForm) {
-        loginForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const msg = document.getElementById("login-message");
-
-            const { error } = await sbClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                msg.style.color = "#b56c70";
-                msg.textContent = "Fehler: " + error.message;
-            } else {
-                msg.textContent = "Erfolgreich! Weiterleitung...";
-                setTimeout(() => { window.location.href = "admin.html"; }, 1000);
-            }
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const { error } = await sbClient.auth.signInWithPassword({ 
+                email: document.getElementById("email").value, 
+                password: document.getElementById("password").value 
+            });
+            if (error) { document.getElementById("login-message").textContent = error.message; }
+            else { window.location.href = "admin.html"; }
         });
     }
 
-    // 3. LADEN & FILTERN
+    // 3. UPLOAD-LOGIK (WICHTIG: Das hier fehlte!)
+    const uploadForm = document.getElementById("upload-form");
+    if (uploadForm) {
+        uploadForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const file = document.getElementById("bild-datei").files[0];
+            const titel = document.getElementById("bild-titel").value;
+            const kat = document.getElementById("bild-kategorie").value;
+            const msg = document.getElementById("upload-message");
+
+            msg.textContent = "Upload läuft...";
+            const path = Date.now() + "_" + file.name;
+
+            const { error: sErr } = await sbClient.storage.from('BILDER-MAMA').upload(path, file);
+            if (sErr) { msg.textContent = "Fehler: " + sErr.message; return; }
+
+            const { data: urlData } = sbClient.storage.from('BILDER-MAMA').getPublicUrl(path);
+            await sbClient.from('bilder').insert([{ titel, kategorie: kat, url: urlData.publicUrl, storage_path: path }]);
+            
+            msg.textContent = "Erfolgreich hochgeladen!";
+            uploadForm.reset();
+            ladeBilder();
+        });
+    }
+
     ladeBilder();
 });
 
+// 4. LADEN & FILTERN
 async function ladeBilder() {
     const cont = document.getElementById("bilder-container");
     const adminCont = document.getElementById("admin-bilder-liste"); 
@@ -76,7 +91,7 @@ async function ladeBilder() {
     });
 }
 
-// 4. LÖSCHEN
+// 5. LÖSCHEN
 window.loescheBild = async function(id, path) {
     if (!confirm("Wirklich löschen?")) return;
     await sbClient.storage.from('BILDER-MAMA').remove([path]);
@@ -84,7 +99,6 @@ window.loescheBild = async function(id, path) {
     ladeBilder();
 };
 
-// 5. FILTER
 window.neuerFilter = function(kat) {
     document.querySelectorAll(".gallery-card").forEach(k => {
         k.style.display = (kat === "alle" || k.classList.contains(kat)) ? "" : "none";

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>Admin-Bereich - Silvias Wollsite</title>
     <style>
-        /* Styling für die interaktive Drag & Drop Zone */
         .drag-zone {
             padding: 30px 20px;
             border: 2px dashed #7a6f62;
@@ -116,7 +116,7 @@
             <div style="margin-top: 40px; width: 100%; border-top: 2px solid #f4ece1; padding-top: 30px;">
                 <h2 style="margin-bottom: 10px;">Bilder verwalten & löschen</h2>
                 <p style="font-size: 0.9rem; color: #a89f91; margin-bottom: 20px;">
-                    Hier siehst du alle hochgeladenen Stücke. Klicke auf das Sternchen (⭐), um ein Bild auf der Startseite hervorzuheben, oder auf "Löschen", um es zu entfernen.
+                    Hier siehst du alle hochgeladenen Stücke.
                 </p>
                 
                 <div id="admin-bilder-liste" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -128,22 +128,6 @@
     <footer>
         <p>&copy; 2026 Admin-Modus aktiv</p>
     </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCElOp1MeMJltkSQZHfLuE1UfwGtjm80jY",
-            authDomain: "mamadatenbank.firebaseapp.com",
-            projectId: "mamadatenbank",
-            storageBucket: "mamadatenbank.firebasestorage.app",
-            messagingSenderId: "1098331655605",
-            appId: "1:1098331655605:web:0129125b707678202addfc",
-            measurementId: "G-3C3FW8JDWK"
-        };
-    </script>
 
     <script src="script.js"></script>
 

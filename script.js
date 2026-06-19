@@ -6,7 +6,7 @@ const sbClient = supabase.createClient(supabaseUrl, supabaseKey);
 document.addEventListener("DOMContentLoaded", async () => {
     
     // ==========================================
-    // ADMIN-SCHUTZ & INAKTIVITÄTS-TIMER (OPTIMIERT FÜR LOKALES TESTEN)
+    // ADMIN-SCHUTZ & INAKTIVITÄTS-TIMER
     // ==========================================
     const adminCont = document.getElementById("admin-bilder-liste"); 
     const uploadForm = document.getElementById("upload-form");
@@ -15,12 +15,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { data: { session } } = await sbClient.auth.getSession();
         
         if (!session) {
-            // Wenn wir NICHT lokal testen (sondern live auf GitHub), greift der Schutz streng:
             if (window.location.protocol !== "file:") {
                 window.location.href = "login.html";
                 return;
             } else {
-                // Wenn wir lokal testen, zeigen wir nur eine Warnung in der Konsole, lassen dich aber rein!
                 console.warn("Supabase-Session auf file:// nicht gefunden. Schutz wurde fürs lokale Testen umgangen.");
                 starteInaktivitaetsTimer();
             }
@@ -38,10 +36,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         function timerZuruecksetzen() {
             clearTimeout(timer);
-            timer = setTimeout(logoutNachZeit, 10 * 60 * 1000); // 10 Minuten in Millisekunden
+            timer = setTimeout(logoutNachZeit, 10 * 60 * 1000); // 10 Minuten
         }
 
-        // Bei jeder dieser Aktionen wird die Zeit von vorne gezählt:
         window.onload = timerZuruecksetzen;
         document.onmousemove = timerZuruecksetzen;
         document.onkeypress = timerZuruecksetzen;
@@ -81,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==========================================
-    // DRAG & DROP + BILDVORSCHAU LOGIK
+    // BILDVORSCHAU LOGIK (BEVOR UPLOAD)
     // ==========================================
     const dropZone = document.getElementById("drop-zone");
     const fileInput = document.getElementById("bild-datei");
@@ -91,15 +88,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const dragText = document.getElementById("drag-zone-text");
 
     if (dropZone && fileInput) {
-        dropZone.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            dropZone.classList.add("dragover");
-        });
-
-        dropZone.addEventListener("dragleave", () => {
-            dropZone.classList.remove("dragover");
-        });
-
+        dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
+        dropZone.addEventListener("dragleave", () => { dropZone.classList.remove("dragover"); });
         dropZone.addEventListener("drop", (e) => {
             e.preventDefault();
             dropZone.classList.remove("dragover");
@@ -110,9 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         fileInput.addEventListener("change", (e) => {
-            if (e.target.files.length > 0) {
-                zeigeVorschau(e.target.files[0]);
-            }
+            if (e.target.files.length > 0) { zeigeVorschau(e.target.files[0]); }
         });
     }
 
@@ -121,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 imagePreview.src = e.target.result;
-                previewBox.style.display = "flex";
+                if (previewBox) previewBox.style.display = "flex";
                 if (dragText) dragText.textContent = `📁 ${file.name} ausgewählt`;
             };
             reader.readAsDataURL(file);
@@ -131,8 +119,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (removePreviewBtn && fileInput) {
         removePreviewBtn.addEventListener("click", () => {
             fileInput.value = "";
-            previewBox.style.display = "none";
-            imagePreview.src = "";
+            if (previewBox) previewBox.style.display = "none";
+            if (imagePreview) imagePreview.src = "";
             if (dragText) dragText.textContent = "📂 Datei hierher ziehen oder anklicken zum Auswählen";
         });
     }
@@ -155,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (sErr) { msg.textContent = "Fehler: " + sErr.message; return; }
 
             const { data: urlData } = sbClient.storage.from('bilder-mama').getPublicUrl(path);
-            await sbClient.from('bilder').insert([{ titel, kategorie: kat, url: urlData.publicUrl, storage_path: path }]);
+            await sbClient.from('bilder').insert([{ titel, kategorie: kat, url: urlData.publicUrl, storage_path: path, highlight: false }]);
             
             msg.textContent = "Erfolgreich hochgeladen!";
             uploadForm.reset();
@@ -168,19 +156,43 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // ==========================================
-// GLOBALE FUNKTIONEN (LADEN, FILTER, LOGOUT)
+// GLOBALE FUNKTIONEN (HIGHLIGHTS, FILTER, LOGOUT)
 // ==========================================
 
-// NEU: Globale Abmelde-Funktion für Supabase
 window.abmelden = async function() {
     await sbClient.auth.signOut();
     window.location.href = "login.html";
 };
 
+// NEU: Highlight-Status in der Datenbank umschalten
+window.toggleHighlight = async function(id, aktuellerStatus) {
+    const { error } = await sbClient.from('bilder').update({ highlight: !aktuellerStatus }).eq('id', id);
+    if (error) {
+        alert("Fehler beim Ändern des Highlight-Status: " + error.message);
+    } else {
+        ladeBilder(); // Liste neu laden
+    }
+};
+
+window.loescheBild = async function(id, path) {
+    if (!confirm("Wirklich löschen?")) return;
+    await sbClient.storage.from('bilder-mama').remove([path]);
+    await sbClient.from('bilder').delete().eq('id', id);
+    ladeBilder();
+};
+
 async function ladeBilder() {
-    const cont = document.getElementById("bilder-container");
-    const adminCont = document.getElementById("admin-bilder-liste"); 
-    if (!cont && !adminCont) return;
+    const cont = document.getElementById("bilder-container"); // Galerie-Seite
+    const adminCont = document.getElementById("admin-bilder-liste"); // Admin-Seite
+    const highlightCont = document.getElementById("highlight-container"); // Startseite Highlight
+
+    // Startseiten-Grids für dynamische Album-Erweiterung
+    const haekelnGrid = document.querySelector("#haekeln .gallery-grid");
+    const strickenGrid = document.querySelector("#stricken .gallery-grid");
+    const malereienGrid = document.querySelector("#malereien .gallery-grid");
+
+    // Alte hochgeladene Datenbank-Bilder vor dem Neu-Rendern entfernen, um Dopplungen zu vermeiden
+    document.querySelectorAll('.db-injected-item').forEach(el => el.remove());
 
     const { data } = await sbClient.from('bilder').select('*').order('created_at', { ascending: false });
     if (!data) return;
@@ -188,7 +200,34 @@ async function ladeBilder() {
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
 
+    // 1. HIGHLIGHT-BEREICH AUF DER STARTSEITE ANSTEUERN
+    if (highlightCont) {
+        const highlightBilder = data.filter(d => d.highlight === true);
+        if (highlightBilder.length > 0) {
+            highlightCont.style.display = "block";
+            highlightCont.innerHTML = `
+                <section class="album-section" style="background: #fdfbf7; padding: 25px; border: 2px dashed #b56c70; border-radius: 12px; margin-bottom: 40px;">
+                    <h2 style="color: #b56c70; text-align: center; margin-bottom: 20px;">✨ Aktuell mein neues Projekt</h2>
+                    <div class="gallery-grid">
+                        ${highlightBilder.map(b => `
+                            <div class="gallery-item">
+                                <img src="${b.url}" alt="${b.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
+                                <div class="item-info">
+                                    <h3>${b.titel}</h3>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        } else {
+            highlightCont.style.display = "none";
+        }
+    }
+
+    // 2. ALLE BILDER AN IHRE JEWEILIGEN SEITEN VERTEILEN
     data.forEach(d => {
+        // Für die reine Bildergalerie-Seite
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-item " + d.kategorie; 
@@ -200,18 +239,52 @@ async function ladeBilder() {
             `;
             cont.appendChild(k);
         }
+
+        // NEU: Für die Startseite (Bilder automatisch hinten an die Alben anhängen)
+        if (haekelnGrid || strickenGrid || malereienGrid) {
+            const imgBox = document.createElement("div");
+            imgBox.className = "gallery-item db-injected-item";
+            imgBox.innerHTML = `
+                <img src="${d.url}" alt="${d.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
+                <div class="item-info">
+                    <h3>${d.titel}</h3>
+                </div>
+            `;
+            
+            if (d.kategorie === "haekeln" && haekelnGrid) haekelnGrid.appendChild(imgBox);
+            if (d.kategorie === "stricken" && strickenGrid) strickenGrid.appendChild(imgBox);
+            if (d.kategorie === "malereien" && malereienGrid) malereienGrid.appendChild(imgBox);
+        }
+
+        // Für die Admin-Verwaltungsliste (Mit neuem Highlight-Button)
         if (adminCont) {
             const a = document.createElement("div");
-            a.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee; align-items:center;";
-            a.innerHTML = `<span><strong>${d.titel}</strong> (${d.kategorie})</span><button onclick="loescheBild('${d.id}', '${d.storage_path}')">Löschen</button>`;
+            a.style = "display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #f4ece1; align-items:center; background: white; margin-bottom: 5px; border-radius: 6px;";
+            
+            const hlText = d.highlight ? " <span style='color:#b56c70; font-weight:bold;'>[🔥 Projekt-Highlight]</span>" : "";
+            const btnText = d.highlight ? "⭐ Highlight entfernen" : "✨ Als Highlight setzen";
+            const btnColor = d.highlight ? "#7a6f62" : "#f4ece1";
+            const btnTextColor = d.highlight ? "white" : "#7a6f62";
+
+            a.innerHTML = `
+                <div><strong>${d.titel}</strong> <small>(${d.kategorie})</small>${hlText}</div>
+                <div style="display:flex; gap: 8px;">
+                    <button onclick="toggleHighlight('${d.id}', ${d.highlight})" style="background: ${btnColor}; color: ${btnTextColor}; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:600;">
+                        ${btnText}
+                    </button>
+                    <button onclick="loescheBild('${d.id}', '${d.storage_path}')" style="background: #b56c70; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                        Löschen
+                    </button>
+                </div>
+            `;
             adminCont.appendChild(a);
         }
     });
 
+    // Filter-Trigger für die Galerie-Seite
     if (cont) {
         const urlParams = new URLSearchParams(window.location.search);
         const filterParam = urlParams.get('filter');
-        
         if (filterParam) {
             const targetBtn = Array.from(document.querySelectorAll(".tab-btn")).find(btn => 
                 btn.getAttribute("onclick") && btn.getAttribute("onclick").includes(`'${filterParam}'`)
@@ -222,13 +295,6 @@ async function ladeBilder() {
         }
     }
 }
-
-window.loescheBild = async function(id, path) {
-    if (!confirm("Wirklich löschen?")) return;
-    await sbClient.storage.from('bilder-mama').remove([path]);
-    await sbClient.from('bilder').delete().eq('id', id);
-    ladeBilder();
-};
 
 window.neuerFilter = function(kat, element) {
     if (element) {
@@ -245,6 +311,7 @@ window.neuerFilter = function(kat, element) {
     }
 
     document.querySelectorAll(".gallery-item").forEach(k => {
+        if (k.classList.contains('db-injected-item')) return; // Startseiten-Inhalte ignorieren
         if (kat === "alle") {
             k.style.display = k.classList.contains("malereien") ? "none" : "";
         } else {

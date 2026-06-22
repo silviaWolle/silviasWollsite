@@ -117,6 +117,16 @@ nav {
     border-radius: 20px;
     transition: all 0.3s ease;
 }
+.nav-btnn {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background-color: darkblue;
+}
+
 
 .nav-btn:hover {
     background-color: #e8c5c8;

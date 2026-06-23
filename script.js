@@ -220,7 +220,7 @@ async function ladeBilder() {
     if (cont) cont.innerHTML = "";
     if (adminCont) adminCont.innerHTML = "";
 
-    // 1. NEUER, GEZÄHMTER HIGHLIGHT-BEREICH (ZENTRIERT & GEBLOCKT)
+    // 1. HIGHLIGHT-BEREICH (ZENTRIERT mit object-fit: contain)
     if (highlightCont) {
         const highlightBilder = data.filter(d => d.highlight === true);
         if (highlightBilder.length > 0) {
@@ -231,7 +231,9 @@ async function ladeBilder() {
                     <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; width: 100%;">
                         ${highlightBilder.map(b => `
                             <div class="gallery-item" style="max-width: 380px; width: 100%; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); box-sizing: border-box;">
-                                <img src="${b.url}" alt="${b.titel}" style="width:100%; height:380px; object-fit:cover; border-radius:6px; display:block;">
+                                <div style="width: 100%; height: 380px; background-color: #fcf9f5; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 6px;">
+                                    <img src="${b.url}" alt="${b.titel}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;">
+                                </div>
                                 <div class="item-info" style="text-align: center; margin-top: 12px;">
                                     <h3 style="margin: 0; color: #7a6f62; font-size: 1.3rem;">${b.titel}</h3>
                                 </div>
@@ -245,13 +247,15 @@ async function ladeBilder() {
         }
     }
 
-    // 2. BILDER VERTEILEN
+    // 2. BILDER IN DIE GRIDS VERTEILEN (Geändert auf object-fit: contain)
     data.forEach(d => {
         if (cont) {
             const k = document.createElement("div");
             k.className = "gallery-item " + d.kategorie; 
             k.innerHTML = `
-                <img src="${d.url}" alt="${d.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
+                <div style="width: 100%; height: 250px; background-color: #fcf9f5; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="${d.url}" alt="${d.titel}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;">
+                </div>
                 <div class="item-info">
                     <h3>${d.titel}</h3>
                 </div>
@@ -263,7 +267,9 @@ async function ladeBilder() {
             const imgBox = document.createElement("div");
             imgBox.className = "gallery-item db-injected-item";
             imgBox.innerHTML = `
-                <img src="${d.url}" alt="${d.titel}" style="width:100%; height:250px; object-fit:cover; display:block;">
+                <div style="width: 100%; height: 250px; background-color: #fcf9f5; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="${d.url}" alt="${d.titel}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;">
+                </div>
                 <div class="item-info">
                     <h3>${d.titel}</h3>
                 </div>

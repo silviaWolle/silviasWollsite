@@ -117,6 +117,7 @@ nav {
     border-radius: 20px;
     transition: all 0.3s ease;
 }
+
 .nav-btnn {
     text-decoration: none;
     color: white;
@@ -126,7 +127,6 @@ nav {
     transition: all 0.3s ease;
     background-color: darkblue;
 }
-
 
 .nav-btn:hover {
     background-color: #e8c5c8;
@@ -197,6 +197,8 @@ nav {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .gallery-item:hover {
@@ -207,7 +209,8 @@ nav {
 .gallery-item img {
     width: 100%;
     height: 250px;
-    object-fit: cover;
+    object-fit: contain; /* Zeigt das ganze Bild ohne Abschneiden */
+    background-color: #fcf9f5; /* Sanfter Hintergrund für Ränder bei Hochformaten */
 }
 
 .item-info {
@@ -436,14 +439,18 @@ footer {
 /* Bild-Container für Zoom-Effekt */
 .card-image-wrapper {
     width: 100%;
-    height: 240px;
+    height: 300px; /* Erhöht, damit auch Hochformat-Bilder gut wirken */
     overflow: hidden;
+    background-color: #fcf9f5; /* Sanfter Hintergrund für Ränder bei unpassenden Formaten */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card-image-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Zeigt das komplette Bild, ohne es abzuschneiden! */
     transition: transform 0.5s ease;
 }
 
@@ -523,10 +530,10 @@ footer {
         width: 100% !important;
     }
 
-    /* Zwingt die Bilder auf der Startseite, auf dem Handy kompakt zu bleiben */
-    .gallery-item img {
+    /* Zwingt die Bilder auf der Startseite und der Galerie, auf dem Handy kompakt zu bleiben */
+    .gallery-item img, .card-image-wrapper img {
         height: 240px !important;
         width: 100% !important;
-        object-fit: cover !important;
+        object-fit: contain !important; /* Auch am Handy immer das ganze Bild zeigen */
     }
 }
